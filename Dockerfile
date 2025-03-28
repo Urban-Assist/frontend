@@ -1,24 +1,22 @@
-# Stage 1: Build React app
-FROM node:18-alpine AS builder
+# Stage 1: Build the application
+FROM node:18 AS build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve using simple http-server
-FROM node:18-alpine
-WORKDIR /app
+# Stage 2: Serve the application using nginx
+FROM nginx:alpine
 
-# Install http-server (lightweight alternative to Nginx)
-RUN npm install -g http-server
+# Remove default nginx config
+RUN rm -rf /etc/nginx/conf.d/*
 
-# Copy built app
-COPY --from=builder /app/dist ./dist
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD wget --quiet --tries=1 --spider http://localhost:8080 || exit 1
+# Copy built assets
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-EXPOSE 8080
-CMD ["http-server", "dist", "-p", "8080", "--proxy", "http://localhost:8080?"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
