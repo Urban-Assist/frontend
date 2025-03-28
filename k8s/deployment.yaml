@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: parthpatil01/urbanassist-frontend:latest
+        image: handyshare/urbanassist-frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
