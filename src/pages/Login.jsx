@@ -20,7 +20,7 @@ function Login() {
     e.preventDefault(); // Prevent the default form submission behavior
     try {
       const AUTH_API = import.meta.env.VITE_SERVER_URL;
-      const response = await axios.post('/auth-api/public/authenticate', formData, {
+      const response = await axios.post(AUTH_API + '/auth-api/public/authenticate', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
