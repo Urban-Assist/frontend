@@ -1,7 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { frontendRoutes } from "../utils/frontendRoutes";
 
 const AdminHeader = () => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    // Remove the auth token from localStorage
+    localStorage.removeItem("token");
+    if(localStorage.getItem("role")){
+      localStorage.removeItem("role")
+    }
+   
+    // Navigate to login page
+    navigate(frontendRoutes.LOGIN);
+  };
+
   return (
     <header className="h-16 sm:h-20 flex items-center bg-gray-800 font-montserrat shadow-md fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto px-6 sm:px-12 flex items-center justify-between">
@@ -17,7 +30,7 @@ const AdminHeader = () => {
 
         {/* Sign Out Button */}
         <button 
-          onClick={() => {/* Add sign out logic */}} 
+          onClick={handleLogout} 
           className="px-3 py-2 bg-red-700 hover:bg-red-600 text-white rounded-lg flex items-center gap-2 ml-4 text-sm"
         >
           <svg
