@@ -5,17 +5,22 @@ import { frontendRoutes } from "../utils/frontendRoutes";
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false); // State for mobile menu toggle
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [userRole, setUserRole] = useState(''); // State to track user role
   const navigate = useNavigate();
 
   // Check if user is logged in on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     setIsLoggedIn(!!token);
+    setUserRole(role || '');
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token'); // Clear token from localStorage
+    localStorage.removeItem('role'); // Clear role from localStorage
     setIsLoggedIn(false); // Update login state
+    setUserRole(''); // Reset user role
     navigate(frontendRoutes.LOGIN); // Navigate to login page
   };
 
@@ -65,6 +70,27 @@ const Header = () => {
           >
             Contact us
           </Link>
+          
+          {/* Add Availability Button for Providers */}
+          {isLoggedIn && userRole === 'provider' && (
+            <Link to="/add-availability">
+              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2">
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-5 w-5" 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                >
+                  <path 
+                    fillRule="evenodd" 
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" 
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>Add Availability</span>
+              </button>
+            </Link>
+          )}
 
           {/* Login/Logout Button */}
           {isLoggedIn ? (
@@ -145,6 +171,27 @@ const Header = () => {
             >
               Contact us
             </Link>
+
+            {/* Add Availability Button for Mobile */}
+            {isLoggedIn && userRole === 'provider' && (
+              <Link to="/add-availability">
+                <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                  >
+                    <path 
+                      fillRule="evenodd" 
+                      d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" 
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>Add Availability</span>
+                </button>
+              </Link>
+            )}
 
             {/* Mobile Login/Logout Button */}
             {isLoggedIn ? (
