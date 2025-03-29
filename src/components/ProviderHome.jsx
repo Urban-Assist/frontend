@@ -1,105 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ProviderHome = () => {
-  const canvasRef = useRef(null);
-
-  // Ribbon animation effect
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-    
-    // Set canvas dimensions to match its display size
-    const resizeCanvas = () => {
-      const { width, height } = canvas.getBoundingClientRect();
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
-    };
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // Ribbon properties
-    const ribbons = [];
-    const ribbonCount = 3;
-    const colors = ['#4f46e5', '#3b82f6', '#8b5cf6', '#6366f1'];
-
-    // Initialize ribbons
-    for (let i = 0; i < ribbonCount; i++) {
-      ribbons.push({
-        points: [],
-        pointCount: 12,
-        width: canvas.width * 0.05,
-        color: colors[i % colors.length],
-        speed: 0.5 + (i * 0.2),
-        offset: i * (Math.PI * 2) / ribbonCount,
-        phase: 0
-      });
-
-      // Create initial points for each ribbon
-      for (let j = 0; j < ribbons[i].pointCount; j++) {
-        ribbons[i].points.push({
-          x: 0,
-          y: 0
-        });
-      }
-    }
-
-    // Animation function
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      ribbons.forEach(ribbon => {
-        // Update ribbon phase
-        ribbon.phase += 0.01 * ribbon.speed;
-        
-        // Calculate points
-        for (let i = 0; i < ribbon.pointCount; i++) {
-          const t = i / (ribbon.pointCount - 1);
-          const x = canvas.width * (0.1 + 0.8 * t);
-          const y = canvas.height * 0.5 + 
-                   Math.sin(t * 2 * Math.PI + ribbon.phase + ribbon.offset) * 
-                   canvas.height * 0.15;
-          
-          ribbon.points[i] = { x, y };
-        }
-        
-        // Draw ribbon
-        ctx.beginPath();
-        for (let i = 0; i < ribbon.pointCount - 1; i++) {
-          const p0 = ribbon.points[i];
-          const p1 = ribbon.points[i + 1];
-          
-          if (i === 0) {
-            ctx.moveTo(p0.x, p0.y);
-          } else {
-            // Create curved paths between points
-            const xc = (p0.x + p1.x) / 2;
-            const yc = (p0.y + p1.y) / 2;
-            ctx.quadraticCurveTo(p0.x, p0.y, xc, yc);
-          }
-        }
-        
-        ctx.strokeStyle = ribbon.color;
-        ctx.lineWidth = ribbon.width;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-      });
-
-      animationFrameId = window.requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }, []);
-
   // Service category items component
   const ServiceCategoryItem = ({ name, description }) => (
     <Link to={`/terms-and-conditions?service=${name.toLowerCase().replace(/\s+/g, '-')}`} className="flex items-center p-3 bg-white border border-blue-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition-colors">
@@ -126,16 +28,11 @@ const ProviderHome = () => {
   );
 
   return (
-    <div className="w-full max-w-5xl relative">
-      {/* Canvas for animated ribbon */}
-      <div className="absolute inset-0 -z-10 overflow-hidden opacity-20 pointer-events-none">
-        <canvas ref={canvasRef} className="w-full h-full"></canvas>
-      </div>
-      
+    <div className="w-full max-w-5xl relative z-10">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Provider Dashboard</h1>
       
       {/* Service Enrollment Card */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8 relative z-10">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
           <h2 className="text-xl font-semibold text-white">Service Provider Portal</h2>
         </div>
@@ -160,7 +57,7 @@ const ProviderHome = () => {
       </div>
       
       {/* Getting Started Guide */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden relative z-10">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
           <h2 className="text-xl font-semibold text-white">Getting Started Guide</h2>
         </div>
