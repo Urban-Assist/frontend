@@ -1,9 +1,11 @@
+ 
 import ServiceCards from '../components/ServicesCards';
 import { useEffect, useState } from 'react';
-
+ 
 function UserDashboard() {
   const [userRole, setUserRole] = useState('');
   
+ 
   useEffect(() => {
     const role = localStorage.getItem('role');
     if (role) {
@@ -17,6 +19,7 @@ function UserDashboard() {
       <ServiceCards 
         title={userRole === 'provider' ? 'Services You can Provide' : 'Our Premium Services'}
       />
+ 
     </div>
   );
 }
