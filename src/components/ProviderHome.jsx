@@ -116,17 +116,7 @@ const ProviderHome = () => {
         </div>
       </div>
       
-      {/* Recent Activity Section */}
-      <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Service Registration Status</h2>
-          <Link to="/settings" className="text-blue-600 text-sm hover:underline">View All</Link>
-        </div>
-        <div className="bg-gray-50 rounded-lg p-4 text-center">
-          <p className="text-gray-600">You haven't registered for any services yet.</p>
-          <p className="text-gray-500 text-sm mt-1">Select a service above to get started.</p>
-        </div>
-      </div>
+    
     </div>
   );
 };
