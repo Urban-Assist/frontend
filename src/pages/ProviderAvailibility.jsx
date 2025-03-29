@@ -47,7 +47,7 @@ const ProviderAvailability = () => {
     
     try {
       // You would implement this endpoint in your backend
-      const response = await axios.get(`http://localhost:8083/api/services/${encodeURIComponent(service)}`, {
+      const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/services/${encodeURIComponent(service)}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setServiceInfo(response.data);

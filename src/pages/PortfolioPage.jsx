@@ -21,7 +21,7 @@ export default function PortfolioPage() {
     const fetchProvider = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8083/api/provider/profile/${Id}?service=${service}`, {
+        const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/provider/profile/${Id}?service=${service}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
