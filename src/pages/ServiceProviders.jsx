@@ -4,6 +4,30 @@ import { FaStar, FaMapMarkerAlt, FaSearch, FaFilter, FaChevronRight, FaCheckCirc
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+// Create a utility function to help with provider ID access across components
+export const getProviderIdFromEmail = async (email, token) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/api/provider/providerByEmail`,
+      { email },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    
+    if (response.data && response.data.id) {
+      return response.data.id;
+    }
+    throw new Error('Provider ID not found');
+  } catch (error) {
+    console.error('Error fetching provider ID:', error);
+    throw error;
+  }
+};
+
 export default function ServiceProviders() {
     const { service } = useParams();
     const [serviceProviders, setServiceProviders] = useState([]);
@@ -41,7 +65,26 @@ export default function ServiceProviders() {
                     throw new Error("Failed to fetch providers");
                 }
 
-                setServiceProviders(response.data);
+                // Store providers with clear ID information
+                const providersWithIds = response.data.map(provider => ({
+                    ...provider,
+                    // Ensure ID is explicitly available
+                    providerId: provider.id || null
+                }));
+                
+                setServiceProviders(providersWithIds);
+                
+                // Store provider email-to-id mapping in sessionStorage for other components to use
+                const emailToIdMap = {};
+                providersWithIds.forEach(provider => {
+                    if (provider.email && provider.id) {
+                        emailToIdMap[provider.email] = provider.id;
+                    }
+                });
+                
+                // Store this mapping for other components to access
+                sessionStorage.setItem('providerEmailToIdMap', JSON.stringify(emailToIdMap));
+                
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -192,6 +235,14 @@ export default function ServiceProviders() {
                                     key={index}
                                     to={`/portfolio/${provider.id}?service=${service.toLowerCase()}`}
                                     className="block"
+                                    // Store provider ID in data attribute for easier access
+                                    data-provider-id={provider.id}
+                                    data-provider-email={provider.email}
+                                    onClick={() => {
+                                        // Store the last clicked provider info in localStorage for other components
+                                        localStorage.setItem('lastViewedProviderId', provider.id);
+                                        localStorage.setItem('lastViewedProviderEmail', provider.email);
+                                    }}
                                 >
                                     <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl h-full flex flex-col">
                                         <div className="bg-gray-100 p-6 text-center relative">

@@ -16,7 +16,7 @@ export default function PortfolioPage() {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const server = import.meta.env.VITE_SERVER_URL;
-
+  const [ reviews, setReviews ] = useState([]);
   useEffect(() => {
     const fetchProvider = async () => {
       try {
@@ -50,16 +50,19 @@ export default function PortfolioPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.status === 200) {
+        if (response.status !== 200) {
           throw new Error("Provider not found");
         }
-        const data = response.data;
+        
+          
+        setReviews(response.data);
       } catch (error) {
         console.error("Error fetching provider reviews:", error);
       }
     }
-  
+  console.log("Reviews"+reviews);
     fetchProvider();
+    fetchReviews();
   }, [Id, service, token]);
 
   const openCarousel = (index) => {

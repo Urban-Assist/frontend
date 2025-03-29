@@ -44,7 +44,7 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
         const token = localStorage.getItem('token');
         
         const response = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/api/provider/providerByEmail`,
+          `${import.meta.env.VITE_SERVER_URL}/api/profile/getUserInfo`,
           { email: booking.providerEmail }, // Email in request body
           {
             headers: {
@@ -57,13 +57,8 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
      
       console.log('Provider details:', response.data);
       
-      if (response.data && response.data.id) {
-        setProviderId(response.data.id);
-      } else {
-        console.error('Provider ID not found in response:', response.data);
-        setError('Unable to identify provider information');
-      }
-      
+      console.log('Provider ID:', response.data.id);
+      setProviderId(response.data.id);
       setFetchingProvider(false);
     } catch (err) {
       console.error('Error fetching provider details:', err);
@@ -92,7 +87,7 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
       const token = localStorage.getItem('token');
       
       const reviewData = {
-        providerId: providerId,
+        providerID: providerId,
         review,
         rating,
         serviceType: booking.service
