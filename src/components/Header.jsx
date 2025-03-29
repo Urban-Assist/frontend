@@ -52,7 +52,7 @@ const Header = () => {
             to={frontendRoutes.DASHBOARD}
             className={getNavLinkClass(frontendRoutes.DASHBOARD)}
           >
-            Book a Service
+            {userRole === 'provider' ? 'Available Services' : 'Book a Service'}
           </Link>
           <Link
             to={frontendRoutes.MYBOOKING}
@@ -154,7 +154,7 @@ const Header = () => {
               to={frontendRoutes.DASHBOARD}
               className={getNavLinkClass(frontendRoutes.DASHBOARD)}
             >
-              Book a Service
+              {userRole === 'provider' ? 'Available Services' : 'Book a Service'}
             </Link>
             <Link
               to={frontendRoutes.HOME}
