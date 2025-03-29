@@ -73,7 +73,7 @@ const Header = () => {
           
           {/* Add Availability Button for Providers */}
           {isLoggedIn && userRole === 'provider' && (
-            <Link to="/add-availability">
+            <Link to={frontendRoutes.ADD_AVAIBILITY}>
               <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2">
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -174,7 +174,7 @@ const Header = () => {
 
             {/* Add Availability Button for Mobile */}
             {isLoggedIn && userRole === 'provider' && (
-              <Link to="/add-availability">
+              <Link to={frontendRoutes.ADD_AVAIBILITY}>
                 <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2">
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
