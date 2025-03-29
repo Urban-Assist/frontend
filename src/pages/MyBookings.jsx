@@ -16,6 +16,7 @@ import {
   X
 } from 'lucide-react';
 import axios from 'axios';
+import ReviewModal from '../components/ReviewModal';
 
 // New component for sprinkler animation
 const SprinklerAnimation = () => {
@@ -56,6 +57,8 @@ const MyBookings = () => {
   const [receiptUrl, setReceiptUrl] = useState('');
   const [loadingReceipt, setLoadingReceipt] = useState(false);
   const [receiptError, setReceiptError] = useState(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -79,6 +82,7 @@ const MyBookings = () => {
 
         const data = await response.data;
         setBookings(data);
+        console.log('Bookings:', data); 
         
         // Calculate total earnings for providers
         if (userRole === 'provider') {
@@ -180,6 +184,11 @@ const MyBookings = () => {
       URL.revokeObjectURL(receiptUrl);
       setReceiptUrl('');
     }
+  };
+
+  const openReviewModal = (booking) => {
+    setSelectedBooking(booking);
+    setReviewModalOpen(true);
   };
 
   // Render loading state
@@ -317,6 +326,13 @@ const MyBookings = () => {
           </div>
         </div>
       )}
+
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={reviewModalOpen} 
+        onClose={() => setReviewModalOpen(false)} 
+        booking={selectedBooking} 
+      />
 
       {filteredBookings.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
@@ -473,6 +489,7 @@ const MyBookings = () => {
                             Receipt
                           </button>
                           <button 
+                            onClick={() => openReviewModal(booking)}
                             className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
                           >
                             <CheckCircle className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
