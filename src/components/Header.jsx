@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { frontendRoutes } from "../utils/frontendRoutes";
+import ServiceSelectionModal from "./ServiceSelectionModal";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false); // State for mobile menu toggle
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
   const [userRole, setUserRole] = useState(''); // State to track user role
+  const [showServiceModal, setShowServiceModal] = useState(false); // State for service selection modal
   const navigate = useNavigate();
 
   // Check if user is logged in on component mount
@@ -73,23 +75,24 @@ const Header = () => {
           
           {/* Add Availability Button for Providers */}
           {isLoggedIn && userRole === 'provider' && (
-            <Link to={frontendRoutes.ADD_AVAIBILITY}>
-              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-5 w-5" 
-                  viewBox="0 0 20 20" 
-                  fill="currentColor"
-                >
-                  <path 
-                    fillRule="evenodd" 
-                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" 
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>Add Availability</span>
-              </button>
-            </Link>
+            <button 
+              onClick={() => setShowServiceModal(true)} 
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+              >
+                <path 
+                  fillRule="evenodd" 
+                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" 
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>Add Availability</span>
+            </button>
           )}
 
           {/* Login/Logout Button */}
@@ -174,23 +177,24 @@ const Header = () => {
 
             {/* Add Availability Button for Mobile */}
             {isLoggedIn && userRole === 'provider' && (
-              <Link to={frontendRoutes.ADD_AVAIBILITY}>
-                <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor"
-                  >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" 
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Add Availability</span>
-                </button>
-              </Link>
+              <button 
+                onClick={() => setShowServiceModal(true)}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-5 w-5" 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                >
+                  <path 
+                    fillRule="evenodd" 
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" 
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>Add Availability</span>
+              </button>
             )}
 
             {/* Mobile Login/Logout Button */}
@@ -235,6 +239,12 @@ const Header = () => {
           </nav>
         </div>
       )}
+
+      {/* Service Selection Modal */}
+      <ServiceSelectionModal 
+        isOpen={showServiceModal} 
+        onClose={() => setShowServiceModal(false)} 
+      />
     </header>
   );
 };
