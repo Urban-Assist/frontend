@@ -454,7 +454,7 @@ const MyBookings = () => {
                         Contact
                       </button>
                       <button 
-                        onClick={() => handleViewReceipt(booking.paymentIntentId || 'pi_3R4j4p09cpCtmNAq09P6RFzE')}
+                        onClick={() => handleViewReceipt(booking.transactionId  )}
                         className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
                       >
                         <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
