@@ -75,7 +75,7 @@ const ProviderAvailability = () => {
     
     try {
       const response = await axios.post(
-        `http://localhost:8083/api/availabilities/get`,
+        `${import.meta.env.VITE_SERVER_URL}/api/availabilities/get`,
         { service: service },
         { headers: { Authorization: `Bearer ${token}` }}
       );
@@ -143,7 +143,7 @@ const ProviderAvailability = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8083/api/availabilities", 
+        `${import.meta.env.VITE_SERVER_URL}/api/availabilities`, 
         newAvailability, 
         { headers: { Authorization: `Bearer ${token}` }}
       );
@@ -171,7 +171,7 @@ const ProviderAvailability = () => {
 
     try {
       await axios.delete(
-        `http://localhost:8083/api/availabilities/${eventToDelete.id}`, 
+        `${import.meta.env.VITE_SERVER_URL}/api/availabilities/${eventToDelete.id}`, 
         { headers: { Authorization: `Bearer ${token}` }}
       );
       
