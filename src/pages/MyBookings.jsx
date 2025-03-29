@@ -454,7 +454,7 @@ const MyBookings = () => {
                         Contact
                       </button>
                       <button 
-                        onClick={() => handleViewReceipt(booking.transactionId  )}
+                        onClick={() => handleViewReceipt(booking.transactionId)}
                         className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
                       >
                         <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
@@ -462,7 +462,27 @@ const MyBookings = () => {
                       </button>
                     </div>
                   ) : (
-                    <SprinklerAnimation />
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      {activeTab === 'past' ? (
+                        <div className="flex justify-end space-x-3">
+                          <button 
+                            onClick={() => handleViewReceipt(booking.transactionId)}
+                            className="px-4 py-2 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium flex items-center group"
+                          >
+                            <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                            Receipt
+                          </button>
+                          <button 
+                            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                            Add Review
+                          </button>
+                        </div>
+                      ) : (
+                        <SprinklerAnimation />
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
