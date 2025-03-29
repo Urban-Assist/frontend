@@ -10,6 +10,8 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [animateIn, setAnimateIn] = useState(false);
+  const [providerId, setProviderId] = useState(null);
+  const [fetchingProvider, setFetchingProvider] = useState(false);
 
   useEffect(() => {
     // Trigger animation after component is mounted
@@ -27,14 +29,59 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
       setReview('');
       setSuccess(false);
       setError(null);
+      
+      // Fetch provider details to get the provider ID
+      fetchProviderDetails();
     }
   }, [isOpen, booking]);
+  
+  // Fetch provider details to get ID
+  const fetchProviderDetails = async () => {
+    if (!booking || !booking.providerEmail) return;
+    
+    try {
+        setFetchingProvider(true);
+        const token = localStorage.getItem('token');
+        
+        const response = await axios.post(
+          `${import.meta.env.VITE_SERVER_URL}/api/provider/providerByEmail`,
+          { email: booking.providerEmail }, // Email in request body
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        // Handle response
+     
+      console.log('Provider details:', response.data);
+      
+      if (response.data && response.data.id) {
+        setProviderId(response.data.id);
+      } else {
+        console.error('Provider ID not found in response:', response.data);
+        setError('Unable to identify provider information');
+      }
+      
+      setFetchingProvider(false);
+    } catch (err) {
+      console.error('Error fetching provider details:', err);
+      setError('Failed to load provider information');
+      setFetchingProvider(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (rating === 0) {
       setError('Please select a rating');
+      return;
+    }
+    
+    if (!providerId) {
+      setError('Provider information is missing. Please try again.');
       return;
     }
 
@@ -45,11 +92,13 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
       const token = localStorage.getItem('token');
       
       const reviewData = {
-        providerId: booking.providerId,
+        providerId: providerId,
         review,
         rating,
         serviceType: booking.service
       };
+      
+      console.log('Submitting review:', reviewData);
 
       await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/reviews/addReview`, 
@@ -104,7 +153,12 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
           </p>
         </div>
 
-        {success ? (
+        {fetchingProvider ? (
+          <div className="p-12 flex flex-col items-center justify-center">
+            <Loader className="h-10 w-10 text-indigo-400 animate-spin mb-4" />
+            <p className="text-gray-400">Loading provider information...</p>
+          </div>
+        ) : success ? (
           <div className="p-8 text-center">
             <div className="w-16 h-16 bg-green-500/20 rounded-full mx-auto flex items-center justify-center mb-4">
               <Check className="h-8 w-8 text-green-500" />
@@ -175,7 +229,7 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !providerId}
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-3 rounded-lg font-medium transition-all flex items-center justify-center disabled:opacity-70"
               >
                 {loading ? (
