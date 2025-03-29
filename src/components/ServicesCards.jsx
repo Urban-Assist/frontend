@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaTools, FaBroom, FaWrench, FaBolt, FaRecycle, FaHeart } from "react-icons/fa";
-
+import { FaTools, FaBroom, FaWrench, FaBolt, FaRecycle, FaHeart, FaHandshake } from "react-icons/fa";
 
 // Define a consistent color and icon mapping
 const serviceStyles = {
@@ -44,7 +43,7 @@ const serviceStyles = {
   },
 };
 
-// Enhanced Card component with image
+// Enhanced Card component with image for users
 const ServiceCard = ({ name, description, icon: Icon, color, image, onClick }) => (
   <motion.div
     className="bg-white rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl"
@@ -82,6 +81,49 @@ const ServiceCard = ({ name, description, icon: Icon, color, image, onClick }) =
   </motion.div>
 );
 
+// Provider Service Card - a different UI for providers
+const ProviderServiceCard = ({ name, description, icon: Icon, color, image, onClick }) => (
+  <motion.div
+    className="bg-white rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl border-2 border-transparent hover:border-indigo-500"
+    whileHover={{ y: -4, transition: { duration: 0.3 } }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onClick}
+    role="button"
+    tabIndex={0}
+    aria-label={`Provide ${name} service`}
+    onKeyPress={(e) => e.key === "Enter" && onClick()}
+  >
+    <div className="flex flex-col md:flex-row">
+      <div className="relative h-40 md:h-auto md:w-1/3 overflow-hidden">
+        <img 
+          src={image} 
+          alt={`${name} service`} 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r" />
+      </div>
+      <div className="p-5 md:w-2/3">
+        <div className="flex items-center mb-3">
+          <Icon className={`w-5 h-5 ${color}`} />
+          <h3 className="ml-2 text-xl font-bold text-gray-900">{name}</h3>
+        </div>
+        <p className="text-gray-600 mb-4">{description}</p>
+        <div className="flex justify-between items-center">
+          <button 
+            className={`px-4 py-2 rounded-md bg-indigo-600 text-white font-medium text-sm transition-colors hover:bg-indigo-700 flex items-center`}
+          >
+            <FaHandshake className="mr-2" />
+            Provide this service
+          </button>
+          <div className="text-indigo-600 text-sm font-medium">
+            Join as provider
+          </div>
+        </div>
+      </div>
+    </div>
+  </motion.div>
+);
+
 // Enhanced Skeleton Loader for better UX
 const SkeletonCard = () => (
   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
@@ -114,7 +156,6 @@ export default function ServiceCards({ title }) {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-
         if(token == null) navigate("/login");
 
         setLoading(true);
@@ -152,11 +193,14 @@ export default function ServiceCards({ title }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {title}
+            {role === "provider" ? "Provide Services" : title}
           </h2>
           <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Choose from our range of professional services tailored to meet your specific needs
+            {role === "provider" 
+              ? "Choose which services you'd like to offer to your customers"
+              : "Choose from our range of professional services tailored to meet your specific needs"
+            }
           </p>
         </div>
 
@@ -180,17 +224,29 @@ export default function ServiceCards({ title }) {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hover:cursor-pointer">
+          <div className={`grid grid-cols-1 ${role === "provider" ? "lg:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"} gap-8 hover:cursor-pointer`}>
             {services.map((service, index) => (
-              <ServiceCard
-                key={index}
-                name={service.name}
-                description={service.description}
-                icon={service.icon}
-                color={service.color}
-                image={service.image}
-                onClick={() => handleNavigate(service.name)}
-              />
+              role === "provider" ? (
+                <ProviderServiceCard
+                  key={index}
+                  name={service.name}
+                  description={service.description}
+                  icon={service.icon}
+                  color={service.color}
+                  image={service.image}
+                  onClick={() => handleNavigate(service.name)}
+                />
+              ) : (
+                <ServiceCard
+                  key={index}
+                  name={service.name}
+                  description={service.description}
+                  icon={service.icon}
+                  color={service.color}
+                  image={service.image}
+                  onClick={() => handleNavigate(service.name)}
+                />
+              )
             ))}
           </div>
         )}

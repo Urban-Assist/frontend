@@ -16,6 +16,7 @@ import {
   X
 } from 'lucide-react';
 import axios from 'axios';
+import ReviewModal from '../components/ReviewModal';
 
 // New component for sprinkler animation
 const SprinklerAnimation = () => {
@@ -56,6 +57,8 @@ const MyBookings = () => {
   const [receiptUrl, setReceiptUrl] = useState('');
   const [loadingReceipt, setLoadingReceipt] = useState(false);
   const [receiptError, setReceiptError] = useState(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -79,6 +82,7 @@ const MyBookings = () => {
 
         const data = await response.data;
         setBookings(data);
+        console.log('Bookings:', data); 
         
         // Calculate total earnings for providers
         if (userRole === 'provider') {
@@ -180,6 +184,11 @@ const MyBookings = () => {
       URL.revokeObjectURL(receiptUrl);
       setReceiptUrl('');
     }
+  };
+
+  const openReviewModal = (booking) => {
+    setSelectedBooking(booking);
+    setReviewModalOpen(true);
   };
 
   // Render loading state
@@ -318,6 +327,13 @@ const MyBookings = () => {
         </div>
       )}
 
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={reviewModalOpen} 
+        onClose={() => setReviewModalOpen(false)} 
+        booking={selectedBooking} 
+      />
+
       {filteredBookings.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
           <div className="flex justify-center mb-4">
@@ -454,7 +470,7 @@ const MyBookings = () => {
                         Contact
                       </button>
                       <button 
-                        onClick={() => handleViewReceipt(booking.paymentIntentId || 'pi_3R4j4p09cpCtmNAq09P6RFzE')}
+                        onClick={() => handleViewReceipt(booking.transactionId)}
                         className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
                       >
                         <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
@@ -462,7 +478,28 @@ const MyBookings = () => {
                       </button>
                     </div>
                   ) : (
-                    <SprinklerAnimation />
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      {activeTab === 'past' ? (
+                        <div className="flex justify-end space-x-3">
+                          <button 
+                            onClick={() => handleViewReceipt(booking.transactionId)}
+                            className="px-4 py-2 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium flex items-center group"
+                          >
+                            <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                            Receipt
+                          </button>
+                          <button 
+                            onClick={() => openReviewModal(booking)}
+                            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                            Add Review
+                          </button>
+                        </div>
+                      ) : (
+                        <SprinklerAnimation />
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

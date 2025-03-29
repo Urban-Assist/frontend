@@ -83,6 +83,13 @@ const ClientBookingPage = () => {
     setSelectedSlot(slot);
   };
 
+  // Console log selected slot whenever it changes
+  useEffect(() => {
+    if (selectedSlot) {
+      console.log("Selected Slot:", selectedSlot);
+    }
+  }, [selectedSlot]);
+
   // Handle booking confirmation
   const handleConfirmBooking = () => {
     if (!selectedSlot) return;

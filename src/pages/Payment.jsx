@@ -31,6 +31,23 @@ const Payment = () => {
             return;
         }
 
+        // Log the body data that will be sent in the payment request
+        console.log("Payment page loaded with data:", {
+            user: {
+                id: localStorage.getItem('userId'),
+                service: service,
+                providerId: Id,
+                slot: {
+                    id: selectedSlot._id,
+                    date: selectedSlot.date,
+                    startTime: selectedSlot.startTime,
+                    endTime: selectedSlot.endTime,
+                    originalEndTime: selectedSlot.originalEndTime,
+                    originalStartTime: selectedSlot.originalStartTime
+                }
+            }
+        });
+
         const fetchProviderPrice = async () => {
             try {
                 const response = await axios.get(
@@ -109,9 +126,12 @@ const Payment = () => {
                         providerId: Id,
                         provider: providerData,
                         slot: {
+                            id: selectedSlot._id,
                             date: selectedSlot.date,
                             startTime: selectedSlot.startTime,
-                            endTime: selectedSlot.endTime
+                            endTime: selectedSlot.endTime,
+                            originalEndTime: selectedSlot.originalEndTime,
+                            originalStartTime:selectedSlot.originalStartTime
                         }
                     },
                     card: {
@@ -273,8 +293,8 @@ const Payment = () => {
                             <p>
                                 Your booking for{" "}
                                 {moment(selectedSlot.date).format("LL")} -{" "}
-                                {moment(selectedSlot.startTime, "HH:mm").format("h:mm A")} to{" "}
-                                {moment(selectedSlot.endTime, "HH:mm").format("h:mm A")} has been confirmed!
+                                {moment.utc(selectedSlot.originalStartTime).local().format("h:mm A")} to{" "}
+                                {moment.utc(selectedSlot.originalEndTime).local().format("h:mm A")} has been confirmed!
                             </p>
                             <div className="mt-4 flex justify-end">
                                 <button
