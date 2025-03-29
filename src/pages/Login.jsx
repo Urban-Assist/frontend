@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import { frontendRoutes } from '../utils/frontendRoutes';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -33,7 +34,13 @@ function Login() {
         const role = decoded?.roles[0];
         console.log(role)
         localStorage.setItem('role', role);
-        navigate("/dashboard");
+        
+        // Conditional navigation based on role
+        if (role === "admin") {
+          navigate(frontendRoutes.ADMIN);
+        } else {
+          navigate(frontendRoutes.DASHBOARD);
+        }
       }
     } catch (error) {
       console.error('Login error:', error);

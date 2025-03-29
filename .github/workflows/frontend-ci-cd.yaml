@@ -1,50 +1,50 @@
-name: frontend  CI/CD
+# name: frontend  CI/CD
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
 
-env:
-  IMAGE_NAME: urbanassist-frontend
-  DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+# env:
+#   IMAGE_NAME: urbanassist-frontend
+#   DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
 
-jobs:
-  build-and-push:
-    runs-on: self-hosted  # Critical - uses your pre-configured runner
-    steps:
-    - uses: actions/checkout@v4
+# jobs:
+#   build-and-push:
+#     runs-on: self-hosted  # Critical - uses your pre-configured runner
+#     steps:
+#     - uses: actions/checkout@v4
     
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+#     - name: Set up Node.js
+#       uses: actions/setup-node@v3
+#       with:
+#         node-version: '18'
         
-    - name: Install dependencies
-      run: npm ci
+#     - name: Install dependencies
+#       run: npm ci
       
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ env.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+#     - name: Login to Docker Hub
+#       uses: docker/login-action@v3
+#       with:
+#         username: ${{ env.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_HUB_TOKEN }}
       
-    - name: Build and push Docker image
-      run: |
-        docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_SHA .
-        docker push $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_SHA
-        docker tag $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_SHA $DOCKER_USERNAME/$IMAGE_NAME:latest
-        docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
-  Deploy:
-    runs-on: self-hosted 
-    needs: build-and-push
-    steps:   
-      - name: Verify cluster access
-        run: kubectl cluster-info
+#     - name: Build and push Docker image
+#       run: |
+#         docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_SHA .
+#         docker push $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_SHA
+#         docker tag $DOCKER_USERNAME/$IMAGE_NAME:$GITHUB_SHA $DOCKER_USERNAME/$IMAGE_NAME:latest
+#         docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
+#   Deploy:
+#     runs-on: self-hosted 
+#     needs: build-and-push
+#     steps:   
+#       - name: Verify cluster access
+#         run: kubectl cluster-info
           
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f k8s/
-          kubectl rollout restart deployment frontend-deployment
-          kubectl rollout status deployment frontend-deployment
+#       - name: Deploy to Kubernetes
+#         run: |
+#           kubectl apply -f k8s/
+#           kubectl rollout restart deployment frontend-deployment
+#           kubectl rollout status deployment frontend-deployment
