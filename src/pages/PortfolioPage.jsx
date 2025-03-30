@@ -82,8 +82,9 @@ export default function PortfolioPage() {
           },
         });
         if (response.status === 200) {
-          console.log("Reviews data:", response.data);
-          setReviews(response.data);
+          console.log("Reviews data:", response.data.data);
+          setReviews(response.data.data);
+          
         }
       } catch (error) {
         console.error("Error fetching provider reviews:", error);
@@ -93,6 +94,7 @@ export default function PortfolioPage() {
     fetchProvider();
   }, [Id, service, token, server]);
 
+  console.log("Provider data:-----", reviews);
   const openCarousel = (index) => {
     setCurrentImageIndex(index);
     setCarouselOpen(true);
@@ -272,34 +274,20 @@ export default function PortfolioPage() {
               {reviews && reviews.length > 0 ? (
                 <div className="grid md:grid-cols-2 gap-6">
                   {reviews.map((review, index) => (
-                    <div key={review.id} className="bg-gray-100 rounded-lg p-6 relative shadow-md hover:shadow-lg transition-all">
-                      <FaQuoteRight className="absolute top-4 right-4 text-gray-200 text-3xl" />
-                      <p className="text-gray-700 italic mb-4 leading-relaxed">{review.review}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3">
-                            {review.userDetails?.firstName?.[0] || ''}
-                          </div>
-                          <div>
-                            <span className="font-medium text-gray-800">
-                              {review.userDetails?.firstName || ''} {review.userDetails?.lastName || ''}
-                            </span>
-                            <div className="flex items-center mt-1">
-                              {[...Array(5)].map((_, i) => (
-                                <FaStar key={i} className={i < review.rating ? "text-yellow-500" : "text-gray-300"} />
-                              ))}
-                            </div>
-                          </div>
+                    <div key={review.id || index} className="bg-gray-100 rounded-lg p-6 relative shadow-md hover:shadow-lg transition-all">
+                      <p className="text-gray-700">{review.review || "No review text"}</p>
+                      <div className="flex items-center mt-4">
+                        <div className="flex text-yellow-500">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar key={i} className={i < (review.rating || 0) ? "text-yellow-500" : "text-gray-300"} />
+                          ))}
                         </div>
-                        <div className="text-right">
-                          <span className="text-sm text-gray-500">
-                            {new Date(review.createdAt).toLocaleDateString()}
-                          </span>
-                          <p className="text-xs text-indigo-600 mt-1 capitalize">
-                            {review.serviceType}
-                          </p>
-                        </div>
+                        <span className="ml-2 text-gray-600">
+                          — {review.userDetails ? 
+                              `${review.userDetails.firstName || ''} ${review.userDetails.lastName || ''}`.trim() || 
+                              "Anonymous" : 
+                              "Anonymous"}
+                        </span>
                       </div>
                     </div>
                   ))}
