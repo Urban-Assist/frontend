@@ -274,27 +274,70 @@ export default function PortfolioPage() {
               {reviews && reviews.length > 0 ? (
                 <div className="grid md:grid-cols-2 gap-6">
                   {reviews.map((review, index) => (
-                    <div key={review.id || index} className="bg-gray-100 rounded-lg p-6 relative shadow-md hover:shadow-lg transition-all">
-                      <p className="text-gray-700">{review.review || "No review text"}</p>
-                      <div className="flex items-center mt-4">
-                        <div className="flex text-yellow-500">
-                          {[...Array(5)].map((_, i) => (
-                            <FaStar key={i} className={i < (review.rating || 0) ? "text-yellow-500" : "text-gray-300"} />
-                          ))}
-                        </div>
-                        <span className="ml-2 text-gray-600">
-                          — {review.userDetails ? 
-                              `${review.userDetails.firstName || ''} ${review.userDetails.lastName || ''}`.trim() || 
-                              "Anonymous" : 
-                              "Anonymous"}
-                        </span>
+                    <div 
+                      key={review.id || index} 
+                      className="bg-white rounded-xl p-6 relative shadow-md hover:shadow-xl transition-all border border-gray-100 overflow-hidden group"
+                    >
+                      {/* Decorative quote mark */}
+                      <div className="absolute top-4 right-4 text-indigo-100">
+                        <FaQuoteRight size={36} />
                       </div>
+                      
+                      {/* Rating */}
+                      <div className="flex text-yellow-500 mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <FaStar 
+                            key={i} 
+                            className={i < (review.rating || 0) 
+                              ? "text-yellow-500" 
+                              : "text-gray-300"
+                            } 
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* Review text */}
+                      <p className="text-gray-700 mb-4 relative z-10">
+                        "{review.review || "Great service!"}"
+                      </p>
+                      
+                      {/* Reviewer info */}
+                      <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-100 mr-3 flex-shrink-0">
+                          {review.userDetails?.profilePicUrl ? (
+                            <img 
+                              src={review.userDetails.profilePicUrl} 
+                              alt={review.userDetails.firstName}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-indigo-100 text-indigo-500 font-semibold">
+                              {review.userDetails?.firstName?.[0] || 'A'}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-grow">
+                          <div className="font-medium text-gray-800">
+                            {review.userDetails ? 
+                              `${review.userDetails.firstName || ''} ${review.userDetails.lastName || ''}`.trim() || 
+                              "Anonymous Client" : 
+                              "Anonymous Client"}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {review.serviceType || service || "Client"}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Decorative gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 bg-gray-100 rounded-lg">
-                  <p className="text-gray-500">No reviews available</p>
+                <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-100">
+                  <FaQuoteRight className="mx-auto text-gray-300 mb-3" size={32} />
+                  <p className="text-gray-500">No reviews available yet</p>
                 </div>
               )}
             </div>
