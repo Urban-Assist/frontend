@@ -26,6 +26,11 @@ const Header = () => {
     navigate(frontendRoutes.LOGIN); // Navigate to login page
   };
 
+  // Navigate to Settings page
+  const navigateToSettings = () => {
+    navigate(frontendRoutes.SETTING);
+  };
+
   const getNavLinkClass = (path) => {
     const isActive = location.pathname === path;
     return `${
@@ -72,6 +77,30 @@ const Header = () => {
           >
             Contact us
           </Link>
+          
+          {/* Add Profile Icon for Users */}
+          {isLoggedIn && userRole === 'user' && (
+            <button 
+              onClick={navigateToSettings}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
+              title="Profile Settings"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-6 w-6 text-gray-700" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
+                />
+              </svg>
+            </button>
+          )}
           
           {/* Add Availability Button for Providers */}
           {isLoggedIn && userRole === 'provider' && (
@@ -174,6 +203,30 @@ const Header = () => {
             >
               Contact us
             </Link>
+
+            {/* Add Profile Icon for Mobile */}
+            {isLoggedIn && userRole === 'user' && (
+              <button 
+                onClick={navigateToSettings}
+                className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-5 w-5" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
+                  />
+                </svg>
+                <span>Profile Settings</span>
+              </button>
+            )}
 
             {/* Add Availability Button for Mobile */}
             {isLoggedIn && userRole === 'provider' && (
