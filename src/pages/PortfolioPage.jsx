@@ -24,7 +24,7 @@ export default function PortfolioPage() {
       try {
         setLoading(true);
       
-        const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/provider/profile/${Id}?service=${service}`, {
+        const response = await axios.get(`/api/provider/profile/${Id}?service=${service}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -51,7 +51,7 @@ export default function PortfolioPage() {
       try {
         console.log("Fetching provider ID...", email);
         const user = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/api/profile/getUserInfo`,
+          `/api/profile/getUserInfo`,
           { email: email },
           {
             headers: {

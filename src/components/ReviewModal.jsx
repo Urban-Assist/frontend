@@ -44,7 +44,7 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
         const token = localStorage.getItem('token');
         
         const response = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/api/profile/getUserInfo`,
+          `/api/profile/getUserInfo`,
           { email: booking.providerEmail }, // Email in request body
           {
             headers: {
@@ -96,7 +96,7 @@ const ReviewModal = ({ isOpen, onClose, booking }) => {
       console.log('Submitting review:', reviewData);
 
       await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/reviews/addReview`, 
+        `/reviews/addReview`, 
         reviewData,
         {
           headers: {

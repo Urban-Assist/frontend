@@ -51,7 +51,7 @@ const Payment = () => {
         const fetchProviderPrice = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_SERVER_URL}/api/provider/profile/${Id}?service=${service}`,
+                    `/api/provider/profile/${Id}?service=${service}`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -112,8 +112,8 @@ const Payment = () => {
         }
 
         try {
-            console.log("Sending payment request to:", `${import.meta.env.VITE_SERVER_URL}/payments/card-pay`);
-            const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/payments/card-pay`, {
+            console.log("Sending payment request to:", `/payments/card-pay`);
+            const response = await fetch(`/payments/card-pay`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",

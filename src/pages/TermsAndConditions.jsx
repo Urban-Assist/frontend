@@ -21,7 +21,7 @@ const TermsAndConditions = () => {
 
   const onAgree = async () => {
     console.log(token);
-    const API_URL = `${import.meta.env.VITE_SERVER_URL}/api/provider?service=` + name;
+    const API_URL = `/api/provider?service=` + name;
     try {
       const response = await axios.post(
         API_URL,

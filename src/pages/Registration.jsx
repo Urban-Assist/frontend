@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const RegistrationPage = () => {
     const navigate = useNavigate();
     // Hardcoded Google OAuth2 URL
-    const googleAuthUrl = `${import.meta.env.VITE_SERVER_URL}/auth-api/oauth2/authorize/google`;
+    const googleAuthUrl = `/auth-api/oauth2/authorize/google`;
     
     // State for form data
     const [formData, setFormData] = useState({

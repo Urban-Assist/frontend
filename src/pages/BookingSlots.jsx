@@ -29,7 +29,7 @@ const ClientBookingPage = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/api/availabilities/get`,
+        `/api/availabilities/get`,
         { service: service, id: Id },
         {
           headers: {
