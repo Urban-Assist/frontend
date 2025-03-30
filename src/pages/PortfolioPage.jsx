@@ -10,24 +10,32 @@ export default function PortfolioPage() {
   const queryParams = new URLSearchParams(location.search);
   const service = queryParams.get('service');
   const [provider, setProvider] = useState(null);
+  const [providerID, setProviderID] = useState(null);
   const [isCarouselOpen, setCarouselOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const server = import.meta.env.VITE_SERVER_URL;
-  const [ reviews, setReviews ] = useState([]);
+  const [reviews, setReviews] = useState([]);
+
   useEffect(() => {
     const fetchProvider = async () => {
       try {
         setLoading(true);
+      
         const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/provider/profile/${Id}?service=${service}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.status === 200) {
-          setProvider(response.data);
+          setProvider(response.data); 
+           
+          // Only fetch provider ID after we have the provider data
+          if (response.data?.email) {
+            await fetchProvidersUserID(response.data.email);
+          }
         } else {
           throw new Error("Failed to fetch provider data");
         }
@@ -39,31 +47,51 @@ export default function PortfolioPage() {
       }
     };
 
-    //fetch reviews for the provider
-
-    const fetchReviews = async () =>{
-
+    const fetchProvidersUserID = async (email) => {
       try {
-        console.log(server);
-        const response = await axios.get(server+`/reviews/getReviews/${Id}`, {
+        console.log("Fetching provider ID...", email);
+        const user = await axios.post(
+          `${import.meta.env.VITE_SERVER_URL}/api/profile/getUserInfo`,
+          { email: email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        console.log('Provider details:', user.data);
+        setProviderID(user.data.id);
+        
+        // Now fetch reviews only after we have the provider ID
+        if (user.data.id) {
+          await fetchReviews(user.data.id);
+        }
+      } catch (error) {
+        console.error("Error fetching provider ID:", error);
+      }
+    };
+
+    const fetchReviews = async (id) => {
+      try {
+        console.log("Fetching reviews for provider ID:", id);
+        const response = await axios.get(`${server}/reviews/getReviews/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.status !== 200) {
-          throw new Error("Provider not found");
+        if (response.status === 200) {
+          console.log("Reviews data:", response.data);
+          setReviews(response.data);
         }
-        
-          
-        setReviews(response.data);
       } catch (error) {
         console.error("Error fetching provider reviews:", error);
       }
-    }
-  console.log("Reviews"+reviews);
+    };
+
     fetchProvider();
-    fetchReviews();
-  }, [Id, service, token]);
+  }, [Id, service, token, server]);
 
   const openCarousel = (index) => {
     setCurrentImageIndex(index);
@@ -238,28 +266,47 @@ export default function PortfolioPage() {
             {/* Testimonials */}
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                
                 Client Testimonials
               </h2>
               
-              {provider.testimonials && provider.testimonials.length > 0 ? (
+              {reviews && reviews.length > 0 ? (
                 <div className="grid md:grid-cols-2 gap-6">
-                  {provider.testimonials.map((testimonial, index) => (
-                    <div key={index} className="bg-gray-100 rounded-lg p-6 relative shadow-md hover:shadow-lg transition-all">
+                  {reviews.map((review, index) => (
+                    <div key={review.id} className="bg-gray-100 rounded-lg p-6 relative shadow-md hover:shadow-lg transition-all">
                       <FaQuoteRight className="absolute top-4 right-4 text-gray-200 text-3xl" />
-                      <p className="text-gray-700 italic mb-4 leading-relaxed">{testimonial}</p>
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3">
-                          {index + 1}
+                      <p className="text-gray-700 italic mb-4 leading-relaxed">{review.review}</p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3">
+                            {review.userDetails?.firstName?.[0] || ''}
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-800">
+                              {review.userDetails?.firstName || ''} {review.userDetails?.lastName || ''}
+                            </span>
+                            <div className="flex items-center mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <FaStar key={i} className={i < review.rating ? "text-yellow-500" : "text-gray-300"} />
+                              ))}
+                            </div>
+                          </div>
                         </div>
-                        <span className="font-medium text-gray-800">Client {index + 1}</span>
+                        <div className="text-right">
+                          <span className="text-sm text-gray-500">
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </span>
+                          <p className="text-xs text-indigo-600 mt-1 capitalize">
+                            {review.serviceType}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-10 bg-gray-100 rounded-lg">
-                  <p className="text-gray-500">No testimonials available</p>
+                  <p className="text-gray-500">No reviews available</p>
                 </div>
               )}
             </div>
