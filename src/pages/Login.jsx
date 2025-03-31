@@ -11,8 +11,8 @@ function Login() {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const googleAuthUrl = `/auth-api/oauth2/authorize/google`;
-
+  //const googleAuthUrl = `/auth-api/oauth2/authorize/google`;
+  const googleAuthUrl = `/oauth2/authorization/google`;
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
