@@ -66,13 +66,14 @@ const Header = () => {
             My bookings
           </Link>
           <Link
-            to={frontendRoutes.HOME}
+            to="https://mail.google.com/mail/?view=cm&fs=1&to=admin@urbanassist.com" target="_blank"
             className={getNavLinkClass(frontendRoutes.EXAMPLE)}
           >
             Report
           </Link>
           <Link
-            to={frontendRoutes.HOME}
+                        to="https://mail.google.com/mail/?view=cm&fs=1&to=support.canada@urbanassist.com" target="_blank"
+
             className={getNavLinkClass(frontendRoutes.EXAMPLE)}
           >
             Contact us

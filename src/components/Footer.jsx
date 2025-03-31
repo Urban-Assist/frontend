@@ -49,7 +49,7 @@ export default function Footer() {
             <h3 className="text-gray-900 font-semibold text-lg mb-6">Quick Links</h3>
             <ul className="space-y-4">
               <li><Link to={frontendRoutes.DASHBOARD} className="text-gray-600 hover:text-indigo-600 transition-colors">Home</Link></li>
-              <li><Link to={frontendRoutes.BOOKING} className="text-gray-600 hover:text-indigo-600 transition-colors">Bookings</Link></li>
+              <li><Link to={frontendRoutes.MYBOOKING} className="text-gray-600 hover:text-indigo-600 transition-colors">Bookings</Link></li>
               <li><Link to={frontendRoutes.REPORT} className="text-gray-600 hover:text-indigo-600 transition-colors">Report</Link></li>
               <li>
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@urbanassist.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 transition-colors">
