@@ -14,3 +14,4 @@ data:
   VITE_SERVER_URL: http://172.17.2.145
   VITE_GOOGLE_CLIENT_ID : 2431049737-jqqkl0607p9b98qaqgsoc1rug4e3nvpv.apps.googleusercontent.com
   VITE_GOOGLE_REDIRECT_URI : http://advancedweb-vm4.research.cs.dal.ca/auth-api/public/OAuth/callback
+  
