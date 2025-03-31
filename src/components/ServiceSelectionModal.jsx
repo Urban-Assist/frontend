@@ -38,7 +38,7 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
         setLoading(true);
         const serviceURL = import.meta.env.VITE_SERVER_URL;
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        const response = await axios.get(`${serviceURL}/admin/getServices`, config);
+        const response = await axios.get(`/admin/getServices`, config);
         const servicesData = response.data.message || [];
         
         setServices(servicesData);
