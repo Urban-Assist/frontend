@@ -11,8 +11,7 @@ function Login() {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  //const googleAuthUrl = `/auth-api/oauth2/authorize/google`;
-  const googleAuthUrl = `/oauth2/authorization/google`;
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_GOOGLE_REDIRECT_URI}&response_type=code&scope=email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&access_type=offline&prompt=consent`;
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
