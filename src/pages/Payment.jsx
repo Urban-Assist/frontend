@@ -11,14 +11,12 @@ const Payment = () => {
     const elements = useElements();
 
     const [price, setPrice] = useState(0);
-    const [providerData, setProviderData] = useState(null);  // Add this state to store provider data
+    const [providerData, setProviderData] = useState(null);
 
     const { selectedSlot, Id, service } = location.state;
 
     const [loading, setLoading] = useState(false);
     const [cardName, setCardName] = useState("");
-    //const [cardNumberDisplay, setCardNumberDisplay] = useState("•••• •••• •••• ••••");
-    //const [expiryDisplay, setExpiryDisplay] = useState("MM/YY");
     const [message, setMessage] = useState("");
     const [paymentSuccess, setPaymentSuccess] = useState(false);
 
@@ -31,7 +29,6 @@ const Payment = () => {
             return;
         }
 
-        // Log the body data that will be sent in the payment request
         console.log("Payment page loaded with data:", {
             user: {
                 id: localStorage.getItem('userId'),
@@ -56,10 +53,10 @@ const Payment = () => {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                console.log("Provider API Response:", response.data); // ✅ Debugging API Response
+                console.log("Provider API Response:", response.data);
 
-                setPrice(response.data.price); // ✅ Set dynamic price
-                setProviderData(response.data); // Store the complete provider data
+                setPrice(response.data.price);
+                setProviderData(response.data);
             } catch (error) {
                 console.error("Error fetching provider price:", error);
             }
@@ -74,18 +71,16 @@ const Payment = () => {
         const rawValue = event.value || "";
         const digits = rawValue.replace(/\D/g, "");
         const formatted = digits.replace(/(\d{4})/g, "$1 ").trim().slice(0, 19);
-        setCardNumberDisplay(formatted || "•••• •••• •••• ••••");
     };
 
     const handleExpiryChange = (event) => {
         const rawValue = event.value || "";
-        setExpiryDisplay(rawValue || "MM/YY");
     };
 
     const handlePayment = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setMessage(""); // Clear any previous messages
+        setMessage("");
 
         console.log("Payment attempt started");
 
@@ -173,6 +168,7 @@ const Payment = () => {
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
+                                aria-hidden="true"
                             >
                                 <path
                                     strokeLinecap="round"
@@ -190,6 +186,7 @@ const Payment = () => {
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
+                                aria-hidden="true"
                             >
                                 <path
                                     strokeLinecap="round"
@@ -205,60 +202,65 @@ const Payment = () => {
                     <h1 className="text-2xl font-bold mb-4">Complete Your booking</h1>
                     <p className="text-sm opacity-90">Total amount: ${price}</p>
                 </div>
-                {/* <div className="mb-8">
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-xl">
-            <p className="text-xl mb-2">{cardNumberDisplay}</p>
-            <div className="flex justify-between">
-              <p>{cardName || "CARDHOLDER NAME"}</p>
-              <p>{expiryDisplay}</p>
-            </div>
-          </div>
-        </div> */}
 
                 {!paymentSuccess && (
-                    <form onSubmit={handlePayment} className="space-y-6 mt-6">
+                    <form onSubmit={handlePayment} className="space-y-6 mt-6" aria-label="Payment form">
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-700">Cardholder Name</label>
+                            <label htmlFor="cardholder-name" className="block mb-2 text-sm font-medium text-gray-700">Cardholder Name</label>
                             <input
+                                id="cardholder-name"
                                 type="text"
                                 value={cardName}
                                 onChange={handleNameChange}
                                 placeholder="John Doe"
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
                                 required
+                                aria-required="true"
+                                aria-describedby="cardholder-name-help"
                             />
                         </div>
 
                         <div>
                             <label className="block mb-2 text-sm font-medium text-gray-700">Card Number</label>
-                            <CardNumberElement
-                                className="w-full p-3 border border-gray-300 rounded-lg"
-                                onChange={handleCardNumberChange}
-                                options={{ placeholder: "4242 4242 4242 4242" }}
-                            />
+                            <div aria-label="Card number input">
+                                <CardNumberElement
+                                    className="w-full p-3 border border-gray-300 rounded-lg"
+                                    onChange={handleCardNumberChange}
+                                    options={{ placeholder: "4242 4242 4242 4242" }}
+                                    aria-label="Credit card number"
+                                />
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-700">Expiry Date</label>
-                                <CardExpiryElement
-                                    className="w-full p-3 border border-gray-300 rounded-lg"
-                                    onChange={handleExpiryChange}
-                                />
+                                <div aria-label="Expiry date input">
+                                    <CardExpiryElement
+                                        className="w-full p-3 border border-gray-300 rounded-lg"
+                                        onChange={handleExpiryChange}
+                                        aria-label="Expiration date"
+                                    />
+                                </div>
                             </div>
 
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-700">CVC</label>
-                                <CardCvcElement className="w-full p-3 border border-gray-300 rounded-lg" />
+                                <div aria-label="CVC input">
+                                    <CardCvcElement 
+                                        className="w-full p-3 border border-gray-300 rounded-lg" 
+                                        aria-label="CVC code"
+                                    />
+                                </div>
                             </div>
                         </div>
-
-                        {/* {message && <p className="text-red-500">{message}</p>} */}
 
                         <button
                             type="submit"
                             className="w-full p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
                             disabled={loading}
+                            aria-busy={loading}
+                            aria-live="polite"
                         >
                             {loading ? "Processing..." : `Pay $${price}`}
                         </button>
@@ -270,6 +272,7 @@ const Payment = () => {
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
+                                    aria-hidden="true"
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -285,11 +288,11 @@ const Payment = () => {
                         </div>
                     </form>
                 )}
-                {message && <p className="text-center mt-4 text-red-600">{message}</p>}
+                {message && <p className="text-center mt-4 text-red-600" role="alert" aria-live="assertive">{message}</p>}
                 {paymentSuccess && (
-                    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="confirmation-heading">
                         <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
-                            <h2 className="text-xl font-bold mb-4">Booking Confirmed</h2>
+                            <h2 id="confirmation-heading" className="text-xl font-bold mb-4">Booking Confirmed</h2>
                             <p>
                                 Your booking for{" "}
                                 {moment(selectedSlot.date).format("LL")} -{" "}
@@ -298,8 +301,9 @@ const Payment = () => {
                             </p>
                             <div className="mt-4 flex justify-end">
                                 <button
-                                    onClick={() => navigate("/")} // Redirect to home page
+                                    onClick={() => navigate("/")}
                                     className="bg-green-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-green-600"
+                                    aria-label="Close confirmation dialog"
                                 >
                                     Close
                                 </button>

@@ -32,7 +32,6 @@ export default function PortfolioPage() {
         if (response.status === 200) {
           setProvider(response.data); 
            
-          // Only fetch provider ID after we have the provider data
           if (response.data?.email) {
             await fetchProvidersUserID(response.data.email);
           }
@@ -49,7 +48,6 @@ export default function PortfolioPage() {
 
     const fetchProvidersUserID = async (email) => {
       try {
-        console.log("Fetching provider ID...", email);
         const user = await axios.post(
           `/api/profile/getUserInfo`,
           { email: email },
@@ -61,10 +59,8 @@ export default function PortfolioPage() {
           }
         );
 
-        console.log('Provider details:', user.data);
         setProviderID(user.data.id);
         
-        // Now fetch reviews only after we have the provider ID
         if (user.data.id) {
           await fetchReviews(user.data.id);
         }
@@ -75,16 +71,13 @@ export default function PortfolioPage() {
 
     const fetchReviews = async (id) => {
       try {
-        console.log("Fetching reviews for provider ID:", id);
-        const response = await axios.get(`${server}/reviews/getReviews/${id}`, {
+        const response = await axios.get(`/reviews/getReviews/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.status === 200) {
-          console.log("Reviews data:", response.data.data);
           setReviews(response.data.data);
-          
         }
       } catch (error) {
         console.error("Error fetching provider reviews:", error);
@@ -94,17 +87,14 @@ export default function PortfolioPage() {
     fetchProvider();
   }, [Id, service, token, server]);
 
-  console.log("Provider data:-----", reviews);
   const openCarousel = (index) => {
     setCurrentImageIndex(index);
     setCarouselOpen(true);
-    // Prevent page scrolling when modal is open
     document.body.style.overflow = 'hidden';
   };
 
   const closeCarousel = () => {
     setCarouselOpen(false);
-    // Restore page scrolling
     document.body.style.overflow = 'auto';
   };
 
@@ -124,7 +114,6 @@ export default function PortfolioPage() {
     }
   };
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isCarouselOpen) return;
@@ -145,7 +134,7 @@ export default function PortfolioPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500" aria-label="Loading"></div>
       </div>
     );
   }
@@ -156,7 +145,11 @@ export default function PortfolioPage() {
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Provider Not Found</h2>
           <p className="text-gray-600 mb-6">{error || "We couldn't find the provider you're looking for."}</p>
-          <Link to="/" className="inline-block px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-all">
+          <Link 
+            to="/" 
+            className="inline-block px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-all"
+            aria-label="Return to home page"
+          >
             Return Home
           </Link>
         </div>
@@ -170,8 +163,8 @@ export default function PortfolioPage() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-12">
-      <div className="max-w-5xl mx-auto bg-white rounded-xl overflow-hidden">
+    <div className="bg-gray-100 min-h-screen py-12" role="main">
+      <div className="max-w-5xl mx-auto bg-white rounded-xl overflow-hidden shadow-lg">
         {/* Hero Section */}
         <div className="relative h-64 bg-gradient-to-r from-cyan-100 via-pink-100 to-yellow-100">
           <div className="absolute -bottom-16 left-12">
@@ -179,11 +172,15 @@ export default function PortfolioPage() {
               {provider.profilePic ? (
                 <img
                   src={provider.profilePic}
-                  alt={`${provider.firstName} ${provider.lastName}`}
+                  alt={`Profile picture of ${provider.firstName} ${provider.lastName}`}
                   className="w-full h-full object-cover"
+                  aria-labelledby="provider-name"
                 />
               ) : (
-                <div className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-500 text-2xl font-bold">
+                <div 
+                  className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-500 text-2xl font-bold"
+                  aria-hidden="true"
+                >
                   {provider.firstName?.[0]}{provider.lastName?.[0]}
                 </div>
               )}
@@ -195,66 +192,68 @@ export default function PortfolioPage() {
         <div className="pt-20 px-12 pb-8">
           <div className="flex flex-col md:flex-row md:justify-between md:items-end">
             <div className="mb-6 md:mb-0">
-              <h1 className="text-3xl font-bold text-gray-800">
+              <h1 id="provider-name" className="text-3xl font-bold text-gray-800">
                 {provider.firstName || ''} {provider.lastName || ''}
               </h1>
               <div className="flex items-center mt-2 text-gray-600">
-                <FaBriefcase className="mr-2 text-indigo-500" />
+                <FaBriefcase className="mr-2 text-indigo-500" aria-hidden="true" />
                 <span>{service || "Service Provider"}</span>
               </div>
             </div>
             <div className="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-4">
               <div className="flex items-center px-4 py-2 bg-gray-100 rounded-full">
-                <FaStar className="text-yellow-500 mr-2" />
+                <FaStar className="text-yellow-500 mr-2" aria-hidden="true" />
                 <span className="font-semibold">{provider.stars || "New"}</span>
               </div>
               <div className="px-4 py-2 bg-indigo-100 text-indigo-700 font-semibold rounded-full">
-                $ {formatPrice(provider.price)}
+                {formatPrice(provider.price)}
               </div>
             </div>
           </div>
 
           {/* Description */}
-          <div className="mt-8 p-6 bg-gray-100 rounded-lg border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-800 mb-3">About</h2>
+          <section aria-labelledby="about-heading" className="mt-8 p-6 bg-gray-100 rounded-lg border border-gray-100">
+            <h2 id="about-heading" className="text-xl font-semibold text-gray-800 mb-3">About</h2>
             <p className="text-gray-600 leading-relaxed">
               {provider.description || "No description provided."}
             </p>
-          </div>
+          </section>
 
           {/* Location */}
           {provider.address && (
             <div className="mt-6 flex items-start">
-              <FaMapMarkerAlt className="text-red-500 mt-1 mr-3 flex-shrink-0" />
+              <FaMapMarkerAlt className="text-red-500 mt-1 mr-3 flex-shrink-0" aria-hidden="true" />
               <span className="text-gray-600">{provider.address}</span>
             </div>
           )}
         </div>
 
-        {/* Tabs */}
+        {/* Content Sections */}
         <div className="border-t border-gray-200">
           <div className="px-12 py-8">
             {/* Work Samples */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                
+            <section aria-labelledby="work-samples-heading" className="mb-12">
+              <h2 id="work-samples-heading" className="text-2xl font-bold text-gray-800 mb-6">
                 Work Samples
               </h2>
               
               {provider.workImages && provider.workImages.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" role="list">
                   {provider.workImages.map((image, index) => (
                     <div 
                       key={index} 
                       className="cursor-pointer group relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
                       onClick={() => openCarousel(index)}
+                      role="listitem"
+                      tabIndex="0"
+                      aria-label={`View work sample ${index + 1}`}
+                      onKeyDown={(e) => e.key === 'Enter' && openCarousel(index)}
                     >
                       <img
                         src={image}
-                        alt={`work ${index + 1}`}
+                        alt={`Work sample ${index + 1}`}
                         className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                       />
-                      
                     </div>
                   ))}
                 </div>
@@ -263,55 +262,56 @@ export default function PortfolioPage() {
                   <p className="text-gray-500">No work samples available</p>
                 </div>
               )}
-            </div>
+            </section>
 
             {/* Testimonials */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+            <section aria-labelledby="testimonials-heading" className="mb-12">
+              <h2 id="testimonials-heading" className="text-2xl font-bold text-gray-800 mb-6">
                 Client Testimonials
               </h2>
               
               {reviews && reviews.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-6" role="list">
                   {reviews.map((review, index) => (
-                    <div 
+                    <article 
                       key={review.id || index} 
                       className="bg-white rounded-xl p-6 relative shadow-md hover:shadow-xl transition-all border border-gray-100 overflow-hidden group"
+                      role="listitem"
                     >
-                      {/* Decorative quote mark */}
-                      <div className="absolute top-4 right-4 text-indigo-100">
+                      <div className="absolute top-4 right-4 text-indigo-100" aria-hidden="true">
                         <FaQuoteRight size={36} />
                       </div>
                       
-                      {/* Rating */}
-                      <div className="flex text-yellow-500 mb-3">
+                      <div 
+                        className="flex text-yellow-500 mb-3" 
+                        aria-label={`Rating: ${review.rating || 0} out of 5 stars`}
+                      >
                         {[...Array(5)].map((_, i) => (
                           <FaStar 
                             key={i} 
-                            className={i < (review.rating || 0) 
-                              ? "text-yellow-500" 
-                              : "text-gray-300"
-                            } 
+                            className={i < (review.rating || 0) ? "text-yellow-500" : "text-gray-300"} 
+                            aria-hidden="true"
                           />
                         ))}
                       </div>
                       
-                      {/* Review text */}
-                      <p className="text-gray-700 mb-4 relative z-10">
+                      <blockquote className="text-gray-700 mb-4 relative z-10">
                         "{review.review || "Great service!"}"
-                      </p>
+                      </blockquote>
                       
-                      {/* Reviewer info */}
                       <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-100 mr-3 flex-shrink-0">
                           {review.userDetails?.profilePicUrl ? (
                             <img 
                               src={review.userDetails.profilePicUrl} 
-                              alt={review.userDetails.firstName}
+                              alt={`${review.userDetails.firstName || 'User'} profile`}
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-indigo-100 text-indigo-500 font-semibold">
+                            <div 
+                              className="w-full h-full flex items-center justify-center bg-indigo-100 text-indigo-500 font-semibold"
+                              aria-hidden="true"
+                            >
                               {review.userDetails?.firstName?.[0] || 'A'}
                             </div>
                           )}
@@ -328,24 +328,20 @@ export default function PortfolioPage() {
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Decorative gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                    </div>
+                    </article>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-100">
-                  <FaQuoteRight className="mx-auto text-gray-300 mb-3" size={32} />
+                  <FaQuoteRight className="mx-auto text-gray-300 mb-3" size={32} aria-hidden="true" />
                   <p className="text-gray-500">No reviews available yet</p>
                 </div>
               )}
-            </div>
+            </section>
 
             {/* Contact Information */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                
+            <section aria-labelledby="contact-heading" className="mb-12">
+              <h2 id="contact-heading" className="text-2xl font-bold text-gray-800 mb-6">
                 Contact Information
               </h2>
               <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
@@ -353,7 +349,7 @@ export default function PortfolioPage() {
                   {provider.phoneNumber && (
                     <div className="flex items-center p-4 bg-white rounded-lg shadow-sm">
                       <div className="bg-blue-100 p-3 rounded-full mr-4">
-                        <FaPhoneAlt className="text-blue-600" />
+                        <FaPhoneAlt className="text-blue-600" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Phone</p>
@@ -365,7 +361,7 @@ export default function PortfolioPage() {
                   {provider.email && (
                     <div className="flex items-center p-4 bg-white rounded-lg shadow-sm">
                       <div className="bg-green-100 p-3 rounded-full mr-4">
-                        <FaEnvelope className="text-green-600" />
+                        <FaEnvelope className="text-green-600" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Email</p>
@@ -377,7 +373,7 @@ export default function PortfolioPage() {
                   {provider.linkedin && (
                     <div className="flex items-center p-4 bg-white rounded-lg shadow-sm">
                       <div className="bg-blue-100 p-3 rounded-full mr-4">
-                        <FaLinkedin className="text-blue-700" />
+                        <FaLinkedin className="text-blue-700" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">LinkedIn</p>
@@ -386,6 +382,7 @@ export default function PortfolioPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="font-medium text-blue-600 hover:text-blue-800"
+                          aria-label={`View ${provider.firstName}'s LinkedIn profile (opens in new tab)`}
                         >
                           View Profile
                         </a>
@@ -394,13 +391,14 @@ export default function PortfolioPage() {
                   )}
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* Call to Action Button */}
+            {/* Call to Action */}
             <div className="text-center mt-12">
               <Link
                 to={`/booking/${provider.id}?service=${service}`}
-                className="inline-block py-2 px-8 text-lg font-medium text-white bg-indigo-500 rounded-lg shadow-lg hover:from-indigo-700 hover:to-purple-700 transform hover:-translate-y-1 transition-all"
+                className="inline-block py-3 px-8 text-lg font-medium text-white bg-indigo-600 rounded-lg shadow-lg hover:bg-indigo-700 transform hover:-translate-y-1 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                aria-label={`Book an appointment with ${provider.firstName}`}
               >
                 Book Now
               </Link>
@@ -409,64 +407,78 @@ export default function PortfolioPage() {
         </div>
       </div>
 
-      {/* Custom Carousel Modal */}
+      {/* Image Carousel Modal */}
       {isCarouselOpen && provider.workImages && provider.workImages.length > 0 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="carousel-heading"
+        >
           <div className="relative w-full max-w-6xl p-4">
-            {/* Close button */}
             <button
-              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
               onClick={closeCarousel}
+              aria-label="Close image carousel"
             >
-              <FaTimes className="text-gray-800" />
+              <FaTimes className="text-gray-800" aria-hidden="true" />
             </button>
             
-            {/* Main image */}
+            <h2 id="carousel-heading" className="sr-only">Image carousel showing work samples</h2>
+            
             <div className="flex items-center justify-center h-[80vh] relative">
               <img
                 src={provider.workImages[currentImageIndex]}
-                alt={`work ${currentImageIndex + 1}`}
+                alt={`Work sample ${currentImageIndex + 1} of ${provider.workImages.length}`}
                 className="max-h-full max-w-full object-contain"
               />
               
-              {/* Navigation buttons */}
               <button
-                className="absolute left-4 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
+                className="absolute left-4 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 onClick={prevImage}
+                aria-label="Previous image"
               >
-                <FaArrowLeft className="text-gray-800 text-xl" />
+                <FaArrowLeft className="text-gray-800 text-xl" aria-hidden="true" />
               </button>
               
               <button
-                className="absolute right-4 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
+                className="absolute right-4 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 onClick={nextImage}
+                aria-label="Next image"
               >
-                <FaArrowRight className="text-gray-800 text-xl" />
+                <FaArrowRight className="text-gray-800 text-xl" aria-hidden="true" />
               </button>
             </div>
             
-            {/* Thumbnails */}
-            <div className="flex justify-center mt-4 space-x-2 overflow-x-auto py-2">
+            <div className="flex justify-center mt-4 space-x-2 overflow-x-auto py-2" role="tablist" aria-label="Image thumbnails">
               {provider.workImages.map((image, index) => (
-                <div
+                <button
                   key={index}
-                  className={`w-16 h-16 cursor-pointer rounded-md overflow-hidden ${
-                    currentImageIndex === index ? 'ring-2 ring-indigo-500' : ''
+                  className={`w-16 h-16 cursor-pointer rounded-md overflow-hidden transition-all ${
+                    currentImageIndex === index ? 'ring-2 ring-indigo-500' : 'opacity-70 hover:opacity-100'
                   }`}
                   onClick={() => setCurrentImageIndex(index)}
+                  role="tab"
+                  aria-selected={currentImageIndex === index}
+                  aria-label={`Image ${index + 1}`}
+                  tabIndex={currentImageIndex === index ? 0 : -1}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setCurrentImageIndex(index);
+                    }
+                  }}
                 >
                   <img
                     src={image}
-                    alt={`thumbnail ${index + 1}`}
+                    alt={`Thumbnail for image ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </button>
               ))}
             </div>
             
-            {/* Image counter */}
-            <div className="text-center text-white mt-2">
-              {currentImageIndex + 1} / {provider.workImages.length}
+            <div className="text-center text-white mt-2" aria-live="polite">
+              Image {currentImageIndex + 1} of {provider.workImages.length}
             </div>
           </div>
         </div>

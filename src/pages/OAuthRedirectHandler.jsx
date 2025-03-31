@@ -8,24 +8,23 @@ const OAuthRedirectHandler = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Extract the token from the URL query parameters
+    
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get('token');
 
     if (token) {
-      // Store the token in local storage
+      
       localStorage.setItem('token', token);
       
       const decoded = token ? jwtDecode(token) : null;
       const role = decoded?.roles[0];
       console.log(role)
       localStorage.setItem('role', role);
-      // Redirect to the dashboard
       navigate('/dashboard');
     } else {
-      // Handle the case where there is no token in the URL
+      
       console.error('No token found in the URL');
-      navigate('/login'); // Redirect to login or another appropriate page
+      navigate('/login'); 
     }
   }, [location, navigate]);
 

@@ -5,39 +5,41 @@ const AdminHeader = () => {
   const navigate = useNavigate();
   
   const handleLogout = () => {
-    // Remove the auth token from localStorage
     localStorage.removeItem("token");
     if(localStorage.getItem("role")){
       localStorage.removeItem("role")
     }
-   
-    // Navigate to login page
     navigate(frontendRoutes.LOGIN);
   };
 
   return (
     <header className="h-16 sm:h-20 flex items-center bg-gray-800 font-montserrat shadow-md fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto px-6 sm:px-12 flex items-center justify-between">
-        <Link to={frontendRoutes.ADMIN_DASHBOARD} className="no-underline flex items-center">
+        <Link 
+          to={frontendRoutes.ADMIN_DASHBOARD} 
+          className="no-underline flex items-center"
+          aria-label="Urban Assist Admin Dashboard"
+        >
           <div className="font-black text-white text-2xl flex items-center">
             Urban Assist
-            <span className="w-3 h-3 rounded-full bg-purple-600 ml-2"></span>
+            <span className="w-3 h-3 rounded-full bg-purple-600 ml-2" aria-hidden="true"></span>
             <span className="ml-3 px-2 py-1 text-sm bg-blue-600 text-white rounded-md">
               Admin
             </span>
           </div>
         </Link>
 
-        {/* Sign Out Button */}
         <button 
           onClick={handleLogout} 
           className="px-3 py-2 bg-red-700 hover:bg-red-600 text-white rounded-lg flex items-center gap-2 ml-4 text-sm"
+          aria-label="Sign out"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
+            aria-hidden="true"
           >
             <path
               fillRule="evenodd"

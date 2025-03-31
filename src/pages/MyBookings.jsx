@@ -11,17 +11,15 @@ import {
   AlertCircle,
   MapPin,
   RotateCcw,
-  XCircle,
   FileText,
   X
 } from 'lucide-react';
 import axios from 'axios';
 import ReviewModal from '../components/ReviewModal';
 
-// New component for sprinkler animation
 const SprinklerAnimation = () => {
   return (
-    <div className="mt-6 pt-4 border-t border-gray-100 overflow-hidden">
+    <div className="mt-6 pt-4 border-t border-gray-100 overflow-hidden" aria-hidden="true">
       <div className="relative h-8">
         <div className="absolute inset-0 flex justify-center">
           {[...Array(12)].map((_, i) => (
@@ -65,8 +63,6 @@ const MyBookings = () => {
       try {
         setLoading(true);
         setError(null);
-        // Adjust the API endpoint based on user role
-
         const response = await axios.get(
           `/api/booking?role=${userRole}`,
           {
@@ -82,13 +78,10 @@ const MyBookings = () => {
 
         const data = await response.data;
         setBookings(data);
-        console.log('Bookings:', data); 
         
-        // Calculate total earnings for providers
         if (userRole === 'provider') {
           const total = data.reduce((sum, booking) => sum + booking.pricePaid, 0);
           setTotalEarnings(total);
-          // Delay showing earnings for animation effect
           setTimeout(() => setShowEarnings(true), 300);
         }
         
@@ -103,19 +96,16 @@ const MyBookings = () => {
     fetchBookings();
   }, [userRole]);
 
-  // Format date to display
   const formatDate = (zonedDateTimeStr) => {
     const date = new Date(zonedDateTimeStr);
     return format(date, 'MMM dd, yyyy');
   };
 
-  // Format time to display
   const formatTime = (zonedDateTimeStr) => {
     const date = new Date(zonedDateTimeStr);
     return format(date, 'h:mm a');
   };
 
-  // Filter bookings based on active tab
   const filteredBookings = bookings.filter(booking => {
     const bookingDate = new Date(booking.originalStartTime);
     const today = new Date();
@@ -127,7 +117,6 @@ const MyBookings = () => {
     }
   });
 
-  // Get status based on dates
   const getStatus = (startTime) => {
     const bookingDate = new Date(startTime);
     const today = new Date();
@@ -150,22 +139,18 @@ const MyBookings = () => {
     try {
       setLoadingReceipt(true);
       setReceiptError(null);
-      
-      // Open popup first for better UX
       setShowReceiptPopup(true);
       
-      // Fetch the receipt
       const response = await axios.get(
         `/payments/receipt/${paymentId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          responseType: 'blob', // Important for PDF handling
+          responseType: 'blob',
         }
       );
 
-      // Create a blob URL for the PDF
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       setReceiptUrl(url);
@@ -179,7 +164,6 @@ const MyBookings = () => {
 
   const closeReceiptPopup = () => {
     setShowReceiptPopup(false);
-    // Revoke the object URL to free up memory
     if (receiptUrl) {
       URL.revokeObjectURL(receiptUrl);
       setReceiptUrl('');
@@ -191,35 +175,37 @@ const MyBookings = () => {
     setReviewModalOpen(true);
   };
 
-  // Render loading state
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 mt-15">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">My Bookings</h1>
-        <div className="flex justify-center items-center h-64">
-          <Loader className="h-12 w-12 text-indigo-500 animate-spin" />
+        <div className="flex justify-center items-center h-64" aria-live="polite">
+          <Loader 
+            className="h-12 w-12 text-indigo-500 animate-spin" 
+            aria-label="Loading bookings" 
+          />
           <span className="ml-3 text-lg text-gray-600">Loading bookings...</span>
         </div>
       </div>
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8 mt-15">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">My Bookings</h1>
-        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg" role="alert">
           <div className="flex items-center">
-            <AlertCircle className="h-6 w-6 text-red-500 mr-3" />
+            <AlertCircle className="h-6 w-6 text-red-500 mr-3" aria-hidden="true" />
             <p className="text-red-800 font-medium">Failed to load bookings</p>
           </div>
           <p className="mt-2 text-red-700">{error}</p>
           <button
             className="mt-4 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200 flex items-center"
             onClick={() => window.location.reload()}
+            aria-label="Retry loading bookings"
           >
-            <RotateCcw className="h-4 w-4 mr-2" />
+            <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
             Retry
           </button>
         </div>
@@ -233,18 +219,20 @@ const MyBookings = () => {
         {userRole === 'provider' ? 'Client Bookings' : 'My Bookings'}
       </h1>
 
-      {/* Total Earnings Display for Providers */}
       {userRole === 'provider' && (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-md p-6 mb-6 overflow-hidden relative">
           <div className="flex justify-between items-center">
             <div>
               <h3 className="text-lg font-medium text-emerald-700">Total Earnings</h3>
-              <p className={`text-2xl font-bold text-emerald-600 mt-2 transition-all duration-1000 ease-out ${showEarnings ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <p 
+                className={`text-2xl font-bold text-emerald-600 mt-2 transition-all duration-1000 ease-out ${showEarnings ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                aria-live="polite"
+              >
                 ${totalEarnings.toFixed(2)}
               </p>
             </div>
             <div className={`p-4 bg-emerald-100 rounded-full transition-all duration-700 ${showEarnings ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`}>
-              <DollarSign className="h-8 w-8 text-emerald-500" />
+              <DollarSign className="h-8 w-8 text-emerald-500" aria-hidden="true" />
             </div>
           </div>
           <div className={`h-1 bg-emerald-200 mt-4 rounded-full overflow-hidden transition-all duration-1500 ease-out ${showEarnings ? 'w-full' : 'w-0'}`}>
@@ -253,14 +241,16 @@ const MyBookings = () => {
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b border-gray-200 mb-6" role="tablist">
         <button
           className={`px-6 py-3 font-medium text-sm ${activeTab === 'upcoming'
             ? 'border-b-2 border-indigo-500 text-indigo-600'
             : 'text-gray-500 hover:text-gray-800'
             }`}
           onClick={() => setActiveTab('upcoming')}
+          role="tab"
+          aria-selected={activeTab === 'upcoming'}
+          aria-controls="upcoming-tabpanel"
         >
           Upcoming
         </button>
@@ -270,12 +260,14 @@ const MyBookings = () => {
             : 'text-gray-500 hover:text-gray-800'
             }`}
           onClick={() => setActiveTab('past')}
+          role="tab"
+          aria-selected={activeTab === 'past'}
+          aria-controls="past-tabpanel"
         >
           Past
         </button>
       </div>
 
-      {/* Receipt PDF Popup */}
       {showReceiptPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
           <div 
@@ -283,34 +275,42 @@ const MyBookings = () => {
             style={{
               boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
             }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="receipt-title"
           >
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <div className="flex items-center space-x-2">
-                <FileText className="h-5 w-5 text-indigo-600" />
-                <h3 className="text-lg font-semibold text-gray-800">Payment Receipt</h3>
+                <FileText className="h-5 w-5 text-indigo-600" aria-hidden="true" />
+                <h3 id="receipt-title" className="text-lg font-semibold text-gray-800">Payment Receipt</h3>
               </div>
               <button 
                 onClick={closeReceiptPopup}
                 className="p-1 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-label="Close"
+                aria-label="Close receipt"
               >
-                <X className="h-6 w-6 text-gray-500" />
+                <X className="h-6 w-6 text-gray-500" aria-hidden="true" />
               </button>
             </div>
             
             <div className="h-full p-2">
               {loadingReceipt ? (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mb-4"></div>
+                <div className="flex flex-col items-center justify-center h-full" aria-live="polite">
+                  <div 
+                    className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mb-4"
+                    role="status"
+                    aria-label="Loading receipt"
+                  ></div>
                   <p className="text-gray-600">Loading receipt...</p>
                 </div>
               ) : receiptError ? (
-                <div className="flex flex-col items-center justify-center h-full text-center">
-                  <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
+                <div className="flex flex-col items-center justify-center h-full text-center" role="alert">
+                  <AlertCircle className="h-16 w-16 text-red-500 mb-4" aria-hidden="true" />
                   <p className="text-red-600 mb-2 font-medium">{receiptError}</p>
                   <button
                     onClick={closeReceiptPopup}
                     className="mt-4 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200"
+                    aria-label="Close receipt"
                   >
                     Close
                   </button>
@@ -319,7 +319,8 @@ const MyBookings = () => {
                 <iframe 
                   src={receiptUrl} 
                   className="w-full h-full rounded animate-fadeIn" 
-                  title="Payment Receipt" 
+                  title="Payment Receipt"
+                  aria-label="Payment receipt document"
                 />
               )}
             </div>
@@ -327,7 +328,6 @@ const MyBookings = () => {
         </div>
       )}
 
-      {/* Review Modal */}
       <ReviewModal 
         isOpen={reviewModalOpen} 
         onClose={() => setReviewModalOpen(false)} 
@@ -335,9 +335,9 @@ const MyBookings = () => {
       />
 
       {filteredBookings.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+        <div className="bg-white rounded-lg shadow-md p-8 text-center" aria-live="polite">
           <div className="flex justify-center mb-4">
-            <Calendar size={48} className="text-gray-400" />
+            <Calendar size={48} className="text-gray-400" aria-hidden="true" />
           </div>
           <h3 className="text-xl font-medium text-gray-700 mb-2">No {activeTab} bookings</h3>
           <p className="text-gray-500">
@@ -351,7 +351,7 @@ const MyBookings = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-6" role="region" aria-live="polite">
           {filteredBookings.map((booking) => {
             const status = getStatus(booking.originalStartTime);
 
@@ -359,41 +359,39 @@ const MyBookings = () => {
               <div 
                 key={booking.id} 
                 className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                role="article"
+                aria-labelledby={`booking-${booking.id}-title`}
               >
-                {/* Booking Header with Service Type and Status */}
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                   <div className="flex items-center space-x-2">
                     <div className="p-2 bg-indigo-50 rounded-full">
-                      <Calendar className="h-5 w-5 text-indigo-600" />
+                      <Calendar className="h-5 w-5 text-indigo-600" aria-hidden="true" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-800">{booking.service}</h3>
+                    <h3 id={`booking-${booking.id}-title`} className="text-lg font-semibold text-gray-800">{booking.service}</h3>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center ${status.color}`}>
-                    {status.text === 'Completed' && <CheckCircle className="w-3 h-3 mr-1" />}
-                    {status.text === 'Soon' && <Clock className="w-3 h-3 mr-1" />}
-                    {status.text === 'Upcoming' && <Calendar className="w-3 h-3 mr-1" />}
+                    {status.text === 'Completed' && <CheckCircle className="w-3 h-3 mr-1" aria-hidden="true" />}
+                    {status.text === 'Soon' && <Clock className="w-3 h-3 mr-1" aria-hidden="true" />}
+                    {status.text === 'Upcoming' && <Calendar className="w-3 h-3 mr-1" aria-hidden="true" />}
                     {status.text}
                   </span>
                 </div>
 
-                {/* Booking Details */}
                 <div className="p-6">
-                  {/* Horizontal divider with date info */}
                   <div className="flex items-center justify-center mb-4">
                     <div className="h-px bg-gray-200 flex-grow"></div>
                     <div className="px-4 py-1 bg-indigo-50 rounded-full text-sm font-medium text-indigo-700 flex items-center">
-                      <Calendar className="h-4 w-4 mr-2" />
+                      <Calendar className="h-4 w-4 mr-2" aria-hidden="true" />
                       {formatDate(booking.originalStartTime)}
                     </div>
                     <div className="h-px bg-gray-200 flex-grow"></div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Left Column - Time & Payment */}
                     <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-start">
                         <div className="bg-white p-2 rounded-full shadow-sm">
-                          <Clock className="h-5 w-5 text-indigo-500" />
+                          <Clock className="h-5 w-5 text-indigo-500" aria-hidden="true" />
                         </div>
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">Time</p>
@@ -405,7 +403,7 @@ const MyBookings = () => {
 
                       <div className="flex items-start">
                         <div className="bg-white p-2 rounded-full shadow-sm">
-                          <DollarSign className="h-5 w-5 text-green-500" />
+                          <DollarSign className="h-5 w-5 text-green-500" aria-hidden="true" />
                         </div>
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">Payment</p>
@@ -415,7 +413,7 @@ const MyBookings = () => {
                       
                       <div className="flex items-start">
                         <div className="bg-white p-2 rounded-full shadow-sm">
-                          <CheckCircle className="h-5 w-5 text-blue-500" />
+                          <CheckCircle className="h-5 w-5 text-blue-500" aria-hidden="true" />
                         </div>
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">Confirmation</p>
@@ -426,12 +424,11 @@ const MyBookings = () => {
                       </div>
                     </div>
 
-                    {/* Right Column - Provider/User Info */}
                     <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
                       {userRole === 'provider' ? (
                         <div className="flex items-start">
                           <div className="bg-white p-2 rounded-full shadow-sm">
-                            <User className="h-5 w-5 text-purple-500" />
+                            <User className="h-5 w-5 text-purple-500" aria-hidden="true" />
                           </div>
                           <div className="ml-3">
                             <p className="text-sm font-medium text-gray-900">Client</p>
@@ -442,7 +439,7 @@ const MyBookings = () => {
                       ) : (
                         <div className="flex items-start">
                           <div className="bg-white p-2 rounded-full shadow-sm">
-                            <User className="h-5 w-5 text-purple-500" />
+                            <User className="h-5 w-5 text-purple-500" aria-hidden="true" />
                           </div>
                           <div className="ml-3">
                             <p className="text-sm font-medium text-gray-900">Provider</p>
@@ -453,7 +450,7 @@ const MyBookings = () => {
 
                       <div className="flex items-start">
                         <div className="bg-white p-2 rounded-full shadow-sm">
-                          <Phone className="h-5 w-5 text-teal-500" />
+                          <Phone className="h-5 w-5 text-teal-500" aria-hidden="true" />
                         </div>
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">Contact</p>
@@ -463,17 +460,20 @@ const MyBookings = () => {
                     </div>
                   </div>
                   
-                  {/* Action buttons or sprinkler animation based on role */}
                   {userRole === 'provider' ? (
                     <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end space-x-3">
-                      <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">
+                      <button 
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
+                        aria-label={`Contact client ${booking.userName}`}
+                      >
                         Contact
                       </button>
                       <button 
                         onClick={() => handleViewReceipt(booking.transactionId)}
                         className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
+                        aria-label={`View receipt for booking ${booking.transactionId.substring(0, 8)}`}
                       >
-                        <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                        <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" aria-hidden="true" />
                         Receipt
                       </button>
                     </div>
@@ -484,15 +484,17 @@ const MyBookings = () => {
                           <button 
                             onClick={() => handleViewReceipt(booking.transactionId)}
                             className="px-4 py-2 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium flex items-center group"
+                            aria-label={`View receipt for booking ${booking.transactionId.substring(0, 8)}`}
                           >
-                            <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                            <FileText className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" aria-hidden="true" />
                             Receipt
                           </button>
                           <button 
                             onClick={() => openReviewModal(booking)}
                             className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-sm font-medium flex items-center group"
+                            aria-label={`Add review for ${booking.providerName}`}
                           >
-                            <CheckCircle className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" />
+                            <CheckCircle className="h-4 w-4 mr-1.5 group-hover:scale-110 transition-transform" aria-hidden="true" />
                             Add Review
                           </button>
                         </div>

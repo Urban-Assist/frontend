@@ -7,6 +7,7 @@ const ProviderHome = () => {
     <Link 
       to={`/terms-and-conditions?service=${name.toLowerCase().replace(/\s+/g, '-')}`} 
       className="flex items-center p-3.5 bg-white rounded-lg hover:bg-blue-50 border border-gray-100 hover:border-blue-200 transition-all shadow-sm hover:shadow"
+      aria-label={`Register for ${name} services`}
     >
       <div>
         <p className="font-medium text-gray-800">{name}</p>
@@ -17,9 +18,12 @@ const ProviderHome = () => {
 
   // Step item component
   const StepItem = ({ number, title, description }) => (
-    <div className="flex">
+    <div className="flex" role="listitem">
       <div className="flex-shrink-0 mr-4">
-        <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold shadow-sm">
+        <div 
+          className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold shadow-sm"
+          aria-hidden="true"
+        >
           {number}
         </div>
       </div>
@@ -37,12 +41,15 @@ const ProviderHome = () => {
       {/* Main Content Area */}
       <div className="flex flex-col lg:flex-row gap-6 mx-auto">
         {/* Service Enrollment Card */}
-        <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full lg:w-1/2 transition-all">
+        <section 
+          className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full lg:w-1/2 transition-all"
+          aria-labelledby="service-enrollment-heading"
+        >
           <div className="px-6 pt-6 pb-4">
-            <h2 className="text-xl font-bold text-blue-800 mb-1">Offer Your Services</h2>
+            <h2 id="service-enrollment-heading" className="text-xl font-bold text-blue-800 mb-1">Offer Your Services</h2>
             <p className="text-gray-600 mb-4">Select services you'd like to provide to clients in your area.</p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="list">
               <ServiceCategoryItem name="Home Cleaning" description="House cleaning, deep cleaning services" />
               <ServiceCategoryItem name="Plumbing" description="Pipe repairs, installations, drainage" />
               <ServiceCategoryItem name="Electrical Work" description="Wiring, installations, repairs" />
@@ -51,9 +58,9 @@ const ProviderHome = () => {
               <ServiceCategoryItem name="Lawn & Garden" description="Landscaping, lawn care, gardening" />
             </div>
             
-            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mt-6 shadow-inner">
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mt-6 shadow-inner" role="note">
               <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                <div className="p-2 bg-blue-100 rounded-lg mr-3" aria-hidden="true">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -64,15 +71,18 @@ const ProviderHome = () => {
               </div>
             </div>
           </div>
-        </div>
+        </section>
         
         {/* Getting Started Guide */}
-        <div className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full lg:w-1/2 transition-all">
+        <section 
+          className="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full lg:w-1/2 transition-all"
+          aria-labelledby="getting-started-heading"
+        >
           <div className="px-6 pt-6 pb-4">
-            <h2 className="text-xl font-bold text-indigo-800 mb-1">Getting Started Guide</h2>
+            <h2 id="getting-started-heading" className="text-xl font-bold text-indigo-800 mb-1">Getting Started Guide</h2>
             <p className="text-gray-600 mb-4">Follow these steps to set up your provider profile and start receiving bookings.</p>
             
-            <div className="space-y-5 pl-1">
+            <div className="space-y-5 pl-1" role="list">
               <StepItem 
                 number="1" 
                 title="Complete Your Profile" 
@@ -100,9 +110,9 @@ const ProviderHome = () => {
               />
             </div>
             
-            <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mt-6 shadow-inner">
+            <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mt-6 shadow-inner" role="note">
               <div className="flex items-center">
-                <div className="p-2 bg-indigo-100 rounded-lg mr-3">
+                <div className="p-2 bg-indigo-100 rounded-lg mr-3" aria-hidden="true">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -113,10 +123,8 @@ const ProviderHome = () => {
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
-      
-    
     </div>
   );
 };

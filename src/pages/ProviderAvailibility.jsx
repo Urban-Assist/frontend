@@ -6,7 +6,6 @@ import axios from "axios";
 
 const localizer = momentLocalizer(moment);
 
-// Custom calendar event styling
 const eventStyleGetter = (event) => {
   const isTemporary = event.id === "temp-selected-slot";
   return {
@@ -36,33 +35,28 @@ const ProviderAvailability = () => {
   const calendarRef = useRef(null);
   const addButtonRef = useRef(null);
   
-  // Get token and service from URL
   const token = localStorage.getItem("token");
   const params = new URLSearchParams(window.location.search);
   const service = params.get('service');
 
-  // Fetch service info (this would be added to your API)
   const fetchServiceInfo = async () => {
     if (!service) return;
     
     try {
-      // You would implement this endpoint in your backend
       const response = await axios.get(`/api/services/${encodeURIComponent(service)}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setServiceInfo(response.data);
     } catch (error) {
       console.error("Error fetching service info:", error);
-      // For now we'll mock some data
       setServiceInfo({
         name: service,
-        duration: 60, // in minutes
+        duration: 60,
         color: "#3b82f6"
       });
     }
   };
 
-  // Fetch availabilities from the backend
   const fetchAvailabilities = async () => {
     setIsLoading(true);
     setError(null);
@@ -94,7 +88,6 @@ const ProviderAvailability = () => {
     fetchServiceInfo();
   }, [service]);
 
-  // Convert availabilities to calendar events
   const events = availabilities.map((slot) => ({
     id: slot.id,
     title: "Available",
@@ -102,7 +95,6 @@ const ProviderAvailability = () => {
     end: new Date(slot.endTime),
   }));
 
-  // Add the selected slot to events
   const calendarEvents = selectedSlot
     ? [
         ...events,
@@ -115,12 +107,8 @@ const ProviderAvailability = () => {
       ]
     : events;
 
-  // Handle slot selection
   const handleSelectSlot = (slot) => {
-    // Create time slots in 15-minute increments
     const roundedStart = new Date(Math.ceil(slot.start.getTime() / (15 * 60000)) * (15 * 60000));
-    
-    // Default to 1 hour or service duration
     const durationMinutes = serviceInfo?.duration || 60;
     const roundedEnd = new Date(roundedStart.getTime() + durationMinutes * 60000);
     
@@ -130,7 +118,6 @@ const ProviderAvailability = () => {
     });
   };
 
-  // Add availability to the backend
   const handleAddAvailability = async () => {
     if (!selectedSlot) return;
 
@@ -150,22 +137,17 @@ const ProviderAvailability = () => {
 
       setAvailabilities([...availabilities, response.data]);
       setSelectedSlot(null);
-      
-      // Show success toast (would implement with a toast library)
       console.log("Availability added successfully");
     } catch (error) {
       console.error("Error adding availability:", error);
-      // Show error toast
     }
   };
 
-  // Handle event selection (for deletion)
   const handleSelectEvent = (event) => {
     setEventToDelete(event);
     setOpenDeleteDialog(true);
   };
 
-  // Delete availability from the backend
   const handleDeleteAvailability = async () => {
     if (!eventToDelete) return;
 
@@ -178,22 +160,17 @@ const ProviderAvailability = () => {
       setAvailabilities(availabilities.filter((item) => item.id !== eventToDelete.id));
       setOpenDeleteDialog(false);
       setEventToDelete(null);
-      
-      // Show success toast
       console.log("Availability deleted successfully");
     } catch (error) {
       console.error("Error deleting availability:", error);
-      // Show error toast
     }
   };
 
-  // Close delete dialog
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
     setEventToDelete(null);
   };
 
-  // Detect clicks outside the calendar
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -212,17 +189,14 @@ const ProviderAvailability = () => {
     };
   }, []);
 
-  // Handle calendar navigation
   const handleNavigate = (newDate) => {
     setDate(newDate);
   };
 
-  // Handle view change
   const handleViewChange = (newView) => {
     setView(newView);
   };
 
-  // Custom calendar components
   const CustomToolbar = (toolbar) => {
     const goToBack = () => {
       toolbar.onNavigate('PREV');
@@ -253,7 +227,7 @@ const ProviderAvailability = () => {
           <button
             onClick={goToBack}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Previous"
+            aria-label="Previous period"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
@@ -263,6 +237,7 @@ const ProviderAvailability = () => {
           <button
             onClick={goToCurrent}
             className="px-4 py-1.5 bg-blue-50 text-indigo-500 rounded-md hover:bg-blue-100 transition-colors font-medium"
+            aria-label="Go to today"
           >
             Today
           </button>
@@ -270,19 +245,19 @@ const ProviderAvailability = () => {
           <button
             onClick={goToNext}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Next"
+            aria-label="Next period"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
             
-          <span className="text-lg font-medium ml-2">
+          <h2 className="text-lg font-medium ml-2" aria-live="polite">
             {currentMonthLabel()}
-          </span>
+          </h2>
         </div>
 
-        <div className="inline-flex rounded-md shadow-sm">
+        <div className="inline-flex rounded-md shadow-sm" role="group" aria-label="Calendar view options">
           {viewOptions.map((option) => (
             <button
               key={option.value}
@@ -299,6 +274,7 @@ const ProviderAvailability = () => {
                   ? "rounded-r-lg"
                   : ""
               } border border-gray-300`}
+              aria-pressed={toolbar.view === option.value}
             >
               {option.label}
             </button>
@@ -311,12 +287,13 @@ const ProviderAvailability = () => {
   if (error) {
     return (
       <div className="container mx-auto p-6">
-        <div className="bg-red-50 p-4 rounded-md border border-red-200 text-red-700">
+        <div className="bg-red-50 p-4 rounded-md border border-red-200 text-red-700" role="alert">
           <h3 className="font-semibold">Error</h3>
           <p>{error}</p>
           <button 
             onClick={fetchAvailabilities} 
             className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 rounded-md transition-colors"
+            aria-label="Retry loading availability data"
           >
             Try Again
           </button>
@@ -328,11 +305,10 @@ const ProviderAvailability = () => {
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6 mt-15">
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        {/* Header */}
         <div className="bg-gradient-to-r from-cyan-100 via-pink-100 to-yellow-100 p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <div>
-              <h1 className="text-2xl md:text-3xl font-semibold  mb-2">
+              <h1 className="text-2xl md:text-3xl font-semibold mb-2">
                 Manage Your Availability
               </h1>
               {serviceInfo && (
@@ -342,7 +318,7 @@ const ProviderAvailability = () => {
               )}
             </div>
             <div className="mt-4 md:mt-0">
-              <div className="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 rounded-lg">
+              <div className="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 rounded-lg" role="note" aria-label="Instructions">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -355,10 +331,9 @@ const ProviderAvailability = () => {
           </div>
         </div>
         
-        {/* Main Content */}
         <div className="p-4 md:p-6">
           {isLoading ? (
-            <div className="flex justify-center items-center h-96">
+            <div className="flex justify-center items-center h-96" aria-busy="true" aria-label="Loading availability data">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
             </div>
           ) : (
@@ -372,8 +347,8 @@ const ProviderAvailability = () => {
                 defaultView="week"
                 view={view}
                 onView={handleViewChange}
-                min={new Date(0, 0, 0, 7, 0, 0)} // Start at 7 AM
-                max={new Date(0, 0, 0, 21, 0, 0)} // End at 9 PM
+                min={new Date(0, 0, 0, 7, 0, 0)}
+                max={new Date(0, 0, 0, 21, 0, 0)}
                 date={date}
                 onNavigate={handleNavigate}
                 eventPropGetter={eventStyleGetter}
@@ -384,14 +359,14 @@ const ProviderAvailability = () => {
                 dayLayoutAlgorithm="no-overlap"
                 step={15}
                 timeslots={4}
+                aria-label="Availability calendar"
               />
             </div>
           )}
 
-          {/* Selection Info */}
           {selectedSlot && (
-            <div className="mt-6 p-5 bg-blue-50 rounded-lg border border-blue-100 shadow-sm">
-              <h3 className="text-lg font-semibold text-blue-800 mb-3">
+            <div className="mt-6 p-5 bg-blue-50 rounded-lg border border-blue-100 shadow-sm" role="region" aria-labelledby="new-slot-heading">
+              <h3 id="new-slot-heading" className="text-lg font-semibold text-blue-800 mb-3">
                 New Availability Slot
               </h3>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -414,6 +389,7 @@ const ProviderAvailability = () => {
                   <button
                     onClick={() => setSelectedSlot(null)}
                     className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                    aria-label="Cancel new availability slot"
                   >
                     Cancel
                   </button>
@@ -421,6 +397,7 @@ const ProviderAvailability = () => {
                     ref={addButtonRef}
                     onClick={handleAddAvailability}
                     className="px-5 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition-colors flex items-center"
+                    aria-label="Add new availability slot"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -435,9 +412,8 @@ const ProviderAvailability = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {openDeleteDialog && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-heading">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-fade-in">
             <div className="flex items-center mb-4 text-red-600">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3">
@@ -445,7 +421,7 @@ const ProviderAvailability = () => {
                 <line x1="12" y1="9" x2="12" y2="13"></line>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
-              <h3 className="text-xl font-semibold">Delete Availability</h3>
+              <h3 id="delete-dialog-heading" className="text-xl font-semibold">Delete Availability</h3>
             </div>
             
             <div className="mb-6">
@@ -466,12 +442,14 @@ const ProviderAvailability = () => {
               <button
                 onClick={handleCloseDeleteDialog}
                 className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                aria-label="Cancel deletion"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAvailability}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                aria-label="Confirm deletion"
               >
                 Delete Slot
               </button>

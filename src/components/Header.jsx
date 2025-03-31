@@ -4,13 +4,12 @@ import { frontendRoutes } from "../utils/frontendRoutes";
 import ServiceSelectionModal from "./ServiceSelectionModal";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false); // State for mobile menu toggle
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
-  const [userRole, setUserRole] = useState(''); // State to track user role
-  const [showServiceModal, setShowServiceModal] = useState(false); // State for service selection modal
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const [showServiceModal, setShowServiceModal] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is logged in on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
@@ -19,14 +18,13 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Clear token from localStorage
-    localStorage.removeItem('role'); // Clear role from localStorage
-    setIsLoggedIn(false); // Update login state
-    setUserRole(''); // Reset user role
-    navigate(frontendRoutes.LOGIN); // Navigate to login page
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    setIsLoggedIn(false);
+    setUserRole('');
+    navigate(frontendRoutes.LOGIN);
   };
 
-  // Navigate to Settings page
   const navigateToSettings = () => {
     navigate(frontendRoutes.SETTING);
   };
@@ -44,47 +42,60 @@ const Header = () => {
     <header className="h-16 sm:h-20 flex items-center bg-[rgb(252,250,250)] font-montserrat shadow-sm fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto px-4 sm:px-12 flex items-center justify-between">
         {/* Logo */}
-        <Link to={frontendRoutes.HOME} className="no-underline">
+        <Link 
+          to={frontendRoutes.HOME} 
+          className="no-underline"
+          aria-label="Urban Assist Home"
+        >
           <div className="font-black text-blue-900 text-2xl flex items-center">
             Urban Assist
-            <span className="w-3 h-3 rounded-full bg-purple-600 ml-2"></span>
+            <span className="w-3 h-3 rounded-full bg-purple-600 ml-2" aria-hidden="true"></span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-10">
+        <nav 
+          className="hidden lg:flex items-center space-x-10"
+          aria-label="Main navigation"
+        >
           <Link
             to={frontendRoutes.DASHBOARD}
             className={getNavLinkClass(frontendRoutes.DASHBOARD)}
+            aria-current={location.pathname === frontendRoutes.DASHBOARD ? "page" : undefined}
           >
             {userRole === 'provider' ? 'Services' : 'Book a Service'}
           </Link>
           <Link
             to={frontendRoutes.MYBOOKING}
             className={getNavLinkClass(frontendRoutes.EXAMPLE)}
+            aria-current={location.pathname === frontendRoutes.MYBOOKING ? "page" : undefined}
           >
             My bookings
           </Link>
           <Link
-            to="https://mail.google.com/mail/?view=cm&fs=1&to=admin@urbanassist.com" target="_blank"
+            to="https://mail.google.com/mail/?view=cm&fs=1&to=admin@urbanassist.com" 
+            target="_blank"
+            rel="noopener noreferrer"
             className={getNavLinkClass(frontendRoutes.EXAMPLE)}
+            aria-label="Report an issue (opens in new tab)"
           >
             Report
           </Link>
           <Link
-                        to="https://mail.google.com/mail/?view=cm&fs=1&to=support.canada@urbanassist.com" target="_blank"
-
+            to="https://mail.google.com/mail/?view=cm&fs=1&to=support.canada@urbanassist.com" 
+            target="_blank"
+            rel="noopener noreferrer"
             className={getNavLinkClass(frontendRoutes.EXAMPLE)}
+            aria-label="Contact us (opens in new tab)"
           >
             Contact us
           </Link>
           
-          {/* Add Profile Icon for Users */}
           {isLoggedIn && userRole === 'user' && (
             <button 
               onClick={navigateToSettings}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
-              title="Profile Settings"
+              aria-label="Profile settings"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -92,6 +103,7 @@ const Header = () => {
                 fill="none" 
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path 
                   strokeLinecap="round" 
@@ -103,17 +115,18 @@ const Header = () => {
             </button>
           )}
           
-          {/* Add Availability Button for Providers */}
           {isLoggedIn && userRole === 'provider' && (
             <button 
               onClick={() => setShowServiceModal(true)} 
               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2"
+              aria-label="Add availability"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 className="h-5 w-5" 
                 viewBox="0 0 20 20" 
                 fill="currentColor"
+                aria-hidden="true"
               >
                 <path 
                   fillRule="evenodd" 
@@ -125,18 +138,18 @@ const Header = () => {
             </button>
           )}
 
-          {/* Login/Logout Button */}
           {isLoggedIn ? (
             <button 
               onClick={handleLogout}
               className="px-4 py-2 bg-red-500 hover:bg-red-600 text-gray-50 rounded-xl flex items-center gap-2"
+              aria-label="Logout"
             >
-              {/* Logout Icon */}
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 className="h-5 w-5" 
                 viewBox="0 0 20 20" 
                 fill="currentColor"
+                aria-hidden="true"
               >
                 <path 
                   fillRule="evenodd" 
@@ -148,12 +161,16 @@ const Header = () => {
             </button>
           ) : (
             <Link to={frontendRoutes.LOGIN}>
-              <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-gray-50 rounded-xl flex items-center gap-2">
+              <button 
+                className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-gray-50 rounded-xl flex items-center gap-2"
+                aria-label="Login"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
+                  aria-hidden="true"
                 >
                   <path
                     fillRule="evenodd"
@@ -167,49 +184,68 @@ const Header = () => {
           )}
         </nav>
 
+        {/* Mobile menu button */}
         <button
           className="lg:hidden flex flex-col ml-4"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
         >
-          <span className="w-6 h-1 rounded-full bg-purple-800 mb-1"></span>
-          <span className="w-6 h-1 rounded-full bg-purple-800 mb-1"></span>
-          <span className="w-6 h-1 rounded-full bg-purple-800 mb-1"></span>
+          <span className="w-6 h-1 rounded-full bg-purple-800 mb-1" aria-hidden="true"></span>
+          <span className="w-6 h-1 rounded-full bg-purple-800 mb-1" aria-hidden="true"></span>
+          <span className="w-6 h-1 rounded-full bg-purple-800 mb-1" aria-hidden="true"></span>
         </button>
       </div>
 
+      {/* Mobile menu */}
       {isOpen && (
-        <div className="lg:hidden w-full bg-white shadow-md absolute top-16 left-0 py-4">
+        <div 
+          id="mobile-menu"
+          className="lg:hidden w-full bg-white shadow-md absolute top-16 left-0 py-4"
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
           <nav className="flex flex-col items-center space-y-4">
             <Link
               to={frontendRoutes.DASHBOARD}
               className={getNavLinkClass(frontendRoutes.DASHBOARD)}
+              onClick={() => setIsOpen(false)}
+              aria-current={location.pathname === frontendRoutes.DASHBOARD ? "page" : undefined}
             >
               {userRole === 'provider' ? 'Services' : 'Book a Service'}
             </Link>
             <Link
               to={frontendRoutes.HOME}
               className={getNavLinkClass(frontendRoutes.HOME)}
+              onClick={() => setIsOpen(false)}
+              aria-current={location.pathname === frontendRoutes.HOME ? "page" : undefined}
             >
               My bookings
             </Link>
             <Link
               to={frontendRoutes.HOME}
               className={getNavLinkClass(frontendRoutes.HOME)}
+              onClick={() => setIsOpen(false)}
             >
               Favorites
             </Link>
             <Link
               to={frontendRoutes.HOME}
               className={getNavLinkClass(frontendRoutes.HOME)}
+              onClick={() => setIsOpen(false)}
             >
               Contact us
             </Link>
 
-            {/* Add Profile Icon for Mobile */}
             {isLoggedIn && userRole === 'user' && (
               <button 
-                onClick={navigateToSettings}
+                onClick={() => {
+                  navigateToSettings();
+                  setIsOpen(false);
+                }}
                 className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200"
+                aria-label="Profile settings"
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -217,6 +253,7 @@ const Header = () => {
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
+                  aria-hidden="true"
                 >
                   <path 
                     strokeLinecap="round" 
@@ -229,17 +266,21 @@ const Header = () => {
               </button>
             )}
 
-            {/* Add Availability Button for Mobile */}
             {isLoggedIn && userRole === 'provider' && (
               <button 
-                onClick={() => setShowServiceModal(true)}
+                onClick={() => {
+                  setShowServiceModal(true);
+                  setIsOpen(false);
+                }}
                 className="px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-50 rounded-xl flex items-center gap-2"
+                aria-label="Add availability"
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   className="h-5 w-5" 
                   viewBox="0 0 20 20" 
                   fill="currentColor"
+                  aria-hidden="true"
                 >
                   <path 
                     fillRule="evenodd" 
@@ -251,17 +292,18 @@ const Header = () => {
               </button>
             )}
 
-            {/* Mobile Login/Logout Button */}
             {isLoggedIn ? (
               <button 
                 onClick={handleLogout}
                 className="px-4 py-2 bg-red-500 hover:bg-red-600 text-gray-50 rounded-xl flex items-center gap-2"
+                aria-label="Logout"
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
                   className="h-5 w-5" 
                   viewBox="0 0 20 20" 
                   fill="currentColor"
+                  aria-hidden="true"
                 >
                   <path 
                     fillRule="evenodd" 
@@ -273,12 +315,17 @@ const Header = () => {
               </button>
             ) : (
               <Link to={frontendRoutes.LOGIN}>
-                <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-gray-50 rounded-xl flex items-center gap-2">
+                <button 
+                  className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-gray-50 rounded-xl flex items-center gap-2"
+                  aria-label="Login"
+                  onClick={() => setIsOpen(false)}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       fillRule="evenodd"
@@ -294,7 +341,6 @@ const Header = () => {
         </div>
       )}
 
-      {/* Service Selection Modal */}
       <ServiceSelectionModal 
         isOpen={showServiceModal} 
         onClose={() => setShowServiceModal(false)} 

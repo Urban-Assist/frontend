@@ -3,11 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { frontendRoutes } from "../utils/frontendRoutes";
-
-// Icons for different services (matching those in ServicesCards.jsx)
 import { FaTools, FaBroom, FaWrench, FaBolt, FaRecycle, FaHeart } from "react-icons/fa";
 
-// Service icons mapping (consistent with ServicesCards.jsx)
 const serviceIcons = {
   "Restoration": FaRecycle,
   "House Cleaning": FaBroom,
@@ -52,8 +49,8 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
 
     if (isOpen) {
       fetchServices();
-      setIsClosing(false); // Reset closing state when opening
-      setSelectedService(null); // Reset selected service
+      setIsClosing(false);
+      setSelectedService(null);
     }
   }, [isOpen, navigate]);
 
@@ -61,11 +58,10 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
     setSelectedService(serviceName);
     setIsClosing(true);
     
-    // Delay navigation to allow animation to complete
     setTimeout(() => {
       onClose();
       navigate(`${frontendRoutes.ADD_AVAIBILITY}?service=${encodeURIComponent(serviceName.toLowerCase())}`);
-    }, 400); // Match this with animation duration
+    }, 400);
   };
 
   // Animation variants
@@ -120,6 +116,9 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
           animate="visible"
           exit="exit"
           onClick={!isClosing ? onClose : undefined}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
         >
           <motion.div
             className="w-full max-w-md max-h-[80vh] bg-white rounded-xl shadow-2xl overflow-hidden"
@@ -130,7 +129,7 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
-              <h2 className="text-xl font-bold">Select a Service</h2>
+              <h2 id="modal-title" className="text-xl font-bold">Select a Service</h2>
               <p className="text-indigo-100 text-sm">
                 Choose which service you want to add availability for
               </p>
@@ -139,15 +138,19 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
             <div className="p-5 overflow-y-auto max-h-[60vh]">
               {loading ? (
                 <div className="py-10 flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                  <div 
+                    className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"
+                    aria-hidden="true"
+                  />
                   <p className="text-gray-500">Loading services...</p>
                 </div>
               ) : error ? (
-                <div className="bg-red-50 p-4 rounded-lg text-center">
+                <div className="bg-red-50 p-4 rounded-lg text-center" role="alert">
                   <p className="text-red-600 mb-2">{error}</p>
                   <button
                     onClick={() => window.location.reload()}
                     className="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors"
+                    aria-label="Retry loading services"
                   >
                     Try Again
                   </button>
@@ -157,7 +160,7 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
                   <p className="text-gray-600">No services available</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-3" role="list">
                   {services.map((service, index) => {
                     const Icon = serviceIcons[service.serviceName] || serviceIcons.default;
                     const isSelected = selectedService === service.serviceName;
@@ -177,8 +180,13 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
                         animate={isClosing ? "selected" : "visible"}
                         whileHover={!isClosing ? { x: 5 } : {}}
                         disabled={isClosing}
+                        role="listitem"
+                        aria-label={`Select ${service.serviceName} service`}
                       >
-                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-4 group-hover:bg-indigo-200 transition-colors">
+                        <div 
+                          className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-4 group-hover:bg-indigo-200 transition-colors"
+                          aria-hidden="true"
+                        >
                           <Icon className="w-5 h-5 text-indigo-600" />
                         </div>
                         <div className="flex-1 text-left">
@@ -194,6 +202,7 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
                           className="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-colors"
                           viewBox="0 0 20 20"
                           fill="currentColor"
+                          aria-hidden="true"
                         >
                           <path
                             fillRule="evenodd"
@@ -214,6 +223,7 @@ const ServiceSelectionModal = ({ isOpen, onClose }) => {
                   onClick={onClose}
                   className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
                   disabled={isClosing}
+                  aria-label="Cancel service selection"
                 >
                   Cancel
                 </button>
