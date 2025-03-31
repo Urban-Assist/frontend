@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from 'jwt-decode';
 import { frontendRoutes } from '../utils/frontendRoutes';
 
 function Login() {
@@ -12,16 +12,16 @@ function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_GOOGLE_REDIRECT_URI}&response_type=code&scope=email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&access_type=offline&prompt=consent`;
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     try {
       const AUTH_API = import.meta.env.VITE_SERVER_URL;
-      const response = await axios.post( `${AUTH_API}/auth-api/public/authenticate`, formData, {
+      const response = await axios.post(`${AUTH_API}/auth-api/public/authenticate`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -32,9 +32,8 @@ function Login() {
         localStorage.setItem('token', token);
         const decoded = token ? jwtDecode(token) : null;
         const role = decoded?.roles[0];
-        console.log(role)
         localStorage.setItem('role', role);
-        
+
         // Conditional navigation based on role
         if (role === "admin") {
           navigate(frontendRoutes.ADMIN);
@@ -45,6 +44,30 @@ function Login() {
     } catch (error) {
       console.error('Login error:', error);
       setError(error.response?.data || 'Login failed. Please try again.');
+    }
+  };
+
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      // Redirect to Google's OAuth page
+      window.location.href = googleAuthUrl;
+
+      // After successful Google login, the backend should send the token
+      // Assuming Google OAuth flow is successful and you get a response
+      const googleResponse = { token: "eyJhbGciOiJIUzI1NiJ9..." }; // Mocking a token response
+      const token = googleResponse.token;
+
+      localStorage.setItem('token', token);
+      const decoded = token ? jwtDecode(token) : null;
+      const role = decoded?.roles[0];
+      localStorage.setItem('role', role);
+
+      // Conditional navigation based on role
+      navigate(frontendRoutes.DASHBOARD);
+    } catch (error) {
+      console.error('Google login error:', error);
+      setError('Google login failed. Please try again.');
     }
   };
 
@@ -67,6 +90,7 @@ function Login() {
           <a
             href={googleAuthUrl}
             className="w-full flex items-center justify-center py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
+            onClick={handleGoogleLogin}
           >
             <img
               src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/16px.svg"
