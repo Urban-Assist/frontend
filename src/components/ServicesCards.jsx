@@ -6,38 +6,38 @@ import { FaTools, FaBroom, FaWrench, FaBolt, FaRecycle, FaHeart, FaHandshake } f
 
 // Define a consistent color and icon mapping
 const serviceStyles = {
-  Restoration: { 
-    icon: FaRecycle, 
+  Restoration: {
+    icon: FaRecycle,
     color: "text-teal-600",
     image: "https://img.freepik.com/free-photo/painting-red_1385-599.jpg?semt=ais_hybrid" // These would be replaced with actual image paths in production
   },
-  "House Cleaning": { 
-    icon: FaBroom, 
+  "House Cleaning": {
+    icon: FaBroom,
     color: "text-emerald-600",
     image: "https://img.freepik.com/free-photo/professional-cleaning-service-person-using-vacuum-cleaner-office_23-2150520594.jpg?semt=ais_hybrid"
   },
-  Plumbing: { 
-    icon: FaWrench, 
+  Plumbing: {
+    icon: FaWrench,
     color: "text-blue-600",
     image: "https://img.freepik.com/free-photo/plumbing-professional-doing-his-job_23-2150721533.jpg?semt=ais_hybrid"
   },
-  Electrician: { 
-    icon: FaBolt, 
+  Electrician: {
+    icon: FaBolt,
     color: "text-amber-600",
     image: "https://img.freepik.com/free-photo/male-electrician-works-switchboard-with-electrical-connecting-cable_169016-15085.jpg?semt=ais_hybrid"
   },
-  Repairs: { 
-    icon: FaTools, 
+  Repairs: {
+    icon: FaTools,
     color: "text-rose-600",
     image: "https://img.freepik.com/free-photo/full-shot-man-woman-standing-ladder_23-2149366705.jpg?semt=ais_hybrid"
   },
-  "Mental Well-being": { 
-    icon: FaHeart, 
+  "Mental Well-being": {
+    icon: FaHeart,
     color: "text-pink-600",
     image: "https://img.freepik.com/free-photo/woman-consoling-person-group-therapy-session_23-2148752111.jpg?semt=ais_hybrid"
   },
-  default: { 
-    icon: FaTools, 
+  default: {
+    icon: FaTools,
     color: "text-gray-500",
     image: "/api/placeholder/600/400"
   },
@@ -56,9 +56,9 @@ const ServiceCard = ({ name, description, icon: Icon, color, image, onClick }) =
     onKeyPress={(e) => e.key === "Enter" && onClick()}
   >
     <div className="relative h-48 w-full overflow-hidden">
-      <img 
-        src={image} 
-        alt={`${name} service`} 
+      <img
+        src={image}
+        alt={`${name} service`}
         className="w-full h-full object-cover transform transition-transform hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -69,8 +69,8 @@ const ServiceCard = ({ name, description, icon: Icon, color, image, onClick }) =
     </div>
     <div className="p-5">
       <p className="text-gray-600">{description}</p>
-      <button 
-        className={`mt-4 px-4 py-2 rounded-md bg-opacity-10 ${color} font-medium text-sm transition-colors hover:bg-opacity-20 flex items-center`}
+      <button
+        className={`mt-4 px-4 py-2 rounded-md bg-opacity-10 font-medium text-sm transition-colors hover:bg-opacity-20 flex items-center`}
       >
         Learn more
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -95,9 +95,9 @@ const ProviderServiceCard = ({ name, description, icon: Icon, color, image, onCl
   >
     <div className="flex flex-col md:flex-row">
       <div className="relative h-40 md:h-auto md:w-1/3 overflow-hidden">
-        <img 
-          src={image} 
-          alt={`${name} service`} 
+        <img
+          src={image}
+          alt={`${name} service`}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r" />
@@ -109,7 +109,7 @@ const ProviderServiceCard = ({ name, description, icon: Icon, color, image, onCl
         </div>
         <p className="text-gray-600 mb-4">{description}</p>
         <div className="flex justify-between items-center">
-          <button 
+          <button
             className={`px-4 py-2 rounded-md bg-indigo-600 text-white font-medium text-sm transition-colors hover:bg-indigo-700 flex items-center`}
           >
             <FaHandshake className="mr-2" />
@@ -156,7 +156,7 @@ export default function ServiceCards({ title }) {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        if(token == null) navigate("/login");
+        if (token == null) navigate("/login");
 
         setLoading(true);
         const serviceURL = import.meta.env.VITE_SERVER_URL;
@@ -197,7 +197,7 @@ export default function ServiceCards({ title }) {
           </h2>
           <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            {role === "provider" 
+            {role === "provider"
               ? "Choose which services you'd like to offer to your customers"
               : "Choose from our range of professional services tailored to meet your specific needs"
             }
@@ -216,7 +216,7 @@ export default function ServiceCards({ title }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="text-red-600 font-medium">{error}</p>
-            <button 
+            <button
               className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
               onClick={() => window.location.reload()}
             >
