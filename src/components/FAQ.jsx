@@ -40,27 +40,120 @@ function Faq() {
   ];
 
   return (
-    <>
-      <section className="py-20 px-4 md:px-8 bg-white relative overflow-hidden" aria-labelledby="faq-section">
-        {/* Decorative Elements */}
-        <div className="absolute top-20 left-0 w-64 h-64 bg-indigo-50 rounded-full opacity-70 -translate-x-1/2 -translate-y-1/2 blur-3xl" aria-hidden="true"></div>
-        <div className="absolute bottom-20 right-0 w-80 h-80 bg-blue-50 rounded-full opacity-70 translate-x-1/2 translate-y-1/2 blur-3xl" aria-hidden="true"></div>
+    <section className="py-20 px-4 md:px-8 bg-white relative overflow-hidden" aria-labelledby="faq-heading">
+      {/* Decorative Elements */}
+      <div className="absolute top-20 left-0 w-64 h-64 bg-indigo-50 rounded-full opacity-70 -translate-x-1/2 -translate-y-1/2 blur-3xl" aria-hidden="true"></div>
+      <div className="absolute bottom-20 right-0 w-80 h-80 bg-blue-50 rounded-full opacity-70 translate-x-1/2 translate-y-1/2 blur-3xl" aria-hidden="true"></div>
 
-        <div className="max-w-6xl mx-auto relative">
-          <div className="text-center mb-16">
-            <h2 id="faq-section" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto" aria-describedby="faq-description">
-              Everything you need to know about using Urban Assist
-            </p>
+      <div className="max-w-6xl mx-auto relative">
+        <div className="text-center mb-16">
+          <h1 id="faq-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Everything you need to know about using Urban Assist
+          </p>
+        </div>
+
+        {/* Featured Question */}
+        <div className="mb-12 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 shadow-sm" role="region" aria-labelledby="featured-question">
+          <div className="flex items-start gap-4">
+            <div className="bg-indigo-100 rounded-full p-3 mt-1" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-indigo-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 id="featured-question" className="text-xl font-semibold text-gray-900 mb-3">How does Urban Assist work?</h2>
+              <p className="text-gray-700 leading-relaxed">
+                Urban Assist connects you with verified service providers in your area. Browse services, read reviews,
+                and book appointments with confidence knowing all providers have been thoroughly vetted. After service
+                completion, you can pay securely through our platform and leave feedback to help other users.
+              </p>
+            </div>
           </div>
+        </div>
 
-          {/* Featured Question */}
-          <div className="mb-12 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 shadow-sm">
-            <div className="flex items-start gap-4">
-              <div className="bg-indigo-100 rounded-full p-3 mt-1">
+        {/* FAQ List - Single Column Layout */}
+        <div className="space-y-6" role="list">
+          {faqs.map((faq, index) => {
+            const isHighlighted = index % 3 === 0;
+            const isRounded = index % 2 === 0;
+
+            return (
+              <div
+                key={faq.id}
+                className={`overflow-hidden transition-all duration-300 hover:shadow-md
+                ${isHighlighted ? "bg-indigo-50" : "bg-white border border-gray-200"} 
+                ${isRounded ? "rounded-xl" : "rounded-lg"}`}
+                role="listitem"
+              >
+                <button
+                  onClick={() => toggleQuestion(faq.id)}
+                  className="flex justify-between items-start w-full text-left p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  aria-expanded={openQuestions[faq.id]}
+                  aria-controls={`faq-answer-${faq.id}`}
+                  id={`faq-question-${faq.id}`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center mt-0.5
+                      ${openQuestions[faq.id]
+                        ? "bg-indigo-600 text-white"
+                        : isHighlighted
+                          ? "bg-white text-indigo-600"
+                          : "bg-indigo-100 text-indigo-600"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      <span className="text-sm font-medium">{index + 1}</span>
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 pr-8">
+                      {faq.question}
+                    </h3>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${openQuestions[faq.id] ? "transform rotate-180 text-indigo-600" : "text-gray-400"}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div
+                  id={`faq-answer-${faq.id}`}
+                  role="region"
+                  aria-labelledby={`faq-question-${faq.id}`}
+                  className={`overflow-hidden transition-all duration-300 ${openQuestions[faq.id] ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+                  hidden={!openQuestions[faq.id]}
+                >
+                  <div className="px-6 pb-6 pt-0 text-gray-600 leading-relaxed pl-16">{faq.answer}</div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Still Have Questions */}
+        <div className="mt-16 bg-white rounded-2xl p-8 md:p-10 shadow-lg border border-gray-100 relative z-10" role="region" aria-labelledby="contact-heading">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="hidden md:block bg-indigo-100 rounded-full p-4" aria-hidden="true">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-indigo-600"
+                  className="h-8 w-8 text-indigo-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -69,124 +162,30 @@ function Faq() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                   />
                 </svg>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">How does Urban Assist work?</h3>
-                <p className="text-gray-700 leading-relaxed" id="faq-description">
-                  Urban Assist connects you with verified service providers in your area. Browse services, read reviews,
-                  and book appointments with confidence knowing all providers have been thoroughly vetted. After service
-                  completion, you can pay securely through our platform and leave feedback to help other users.
+                <h2 id="contact-heading" className="text-2xl font-bold text-gray-900 mb-2">Still have questions?</h2>
+                <p className="text-gray-600">
+                  Can't find the answer you're looking for? Our friendly team is here to help.
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* FAQ List - Single Column Layout */}
-          <div className="space-y-6">
-            {faqs.map((faq, index) => {
-              const isHighlighted = index % 3 === 0;
-              const isRounded = index % 2 === 0;
-
-              return (
-                <div
-                  key={faq.id}
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-md
-                  ${isHighlighted ? "bg-indigo-50" : "bg-white border border-gray-200"} 
-                  ${isRounded ? "rounded-xl" : "rounded-lg"}`}
-                  aria-labelledby={`faq-question-${faq.id}`}
-                  role="region"
-                  aria-expanded={openQuestions[faq.id]}
-                >
-                  <button
-                    onClick={() => toggleQuestion(faq.id)}
-                    className="flex justify-between items-start w-full text-left p-6 focus:outline-none"
-                    aria-controls={`faq-answer-${faq.id}`}
-                    aria-expanded={openQuestions[faq.id] ? "true" : "false"}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div
-                        className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center mt-0.5
-                      ${openQuestions[faq.id]
-                          ? "bg-indigo-600 text-white"
-                          : isHighlighted
-                            ? "bg-white text-indigo-600"
-                            : "bg-indigo-100 text-indigo-600"
-                        }`}
-                      >
-                        <span className="text-sm font-medium">{index + 1}</span>
-                      </div>
-                      <h3
-                        id={`faq-question-${faq.id}`}
-                        className="text-lg font-medium text-gray-900 pr-8"
-                      >
-                        {faq.question}
-                      </h3>
-                    </div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${openQuestions[faq.id] ? "transform rotate-180 text-indigo-600" : "text-gray-400"}`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  <div
-                    id={`faq-answer-${faq.id}`}
-                    className={`overflow-hidden transition-all duration-300 ${openQuestions[faq.id] ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
-                    aria-hidden={!openQuestions[faq.id]}
-                  >
-                    <div className="px-6 pb-6 pt-0 text-gray-600 leading-relaxed pl-16">{faq.answer}</div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Still Have Questions */}
-          <div className="mt-16 bg-white rounded-2xl p-8 md:p-10 shadow-lg border border-gray-100 relative z-10">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-5">
-                <div className="hidden md:block bg-indigo-100 rounded-full p-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-indigo-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Still have questions?</h3>
-                  <p className="text-gray-600">
-                    Can't find the answer you're looking for? Our friendly team is here to help.
-                  </p>
-                </div>
-              </div>
-              <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=support@urbanassist.com"
-                target="_blank"
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors whitespace-nowrap flex-shrink-0 shadow-sm"
-                aria-label="Contact Urban Assist support"
-              >
-                Contact Support
-              </a>
-            </div>
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=support@urbanassist.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors whitespace-nowrap flex-shrink-0 shadow-sm"
+              aria-label="Contact Urban Assist support via email"
+            >
+              Contact Support
+            </a>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 

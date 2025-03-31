@@ -11,17 +11,16 @@ function Login() {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  //const googleAuthUrl = `/auth-api/oauth2/authorize/google`;
   const googleAuthUrl = `/oauth2/authorization/google`;
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
     try {
-      const AUTH_API = import.meta.env.VITE_SERVER_URL;
-      const response = await axios.post( `${AUTH_API}/auth-api/public/authenticate`, formData, {
+      const response = await axios.post(`/auth-api/public/authenticate`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -32,10 +31,8 @@ function Login() {
         localStorage.setItem('token', token);
         const decoded = token ? jwtDecode(token) : null;
         const role = decoded?.roles[0];
-        console.log(role)
         localStorage.setItem('role', role);
         
-        // Conditional navigation based on role
         if (role === "admin") {
           navigate(frontendRoutes.ADMIN);
         } else {
@@ -57,27 +54,32 @@ function Login() {
         </div>
 
         {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded mb-4 text-sm">
+          <div 
+            className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded mb-4 text-sm"
+            role="alert"
+            aria-live="assertive"
+          >
             {error}
           </div>
         )}
 
-        {/* Google OAuth Button */}
         <div className="mb-6">
           <a
             href={googleAuthUrl}
             className="w-full flex items-center justify-center py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
+            aria-label="Sign in with Google"
           >
             <img
               src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/16px.svg"
-              alt="Google Logo"
+              alt=""
               className="w-5 h-5 mr-2"
+              aria-hidden="true"
             />
             Sign in with Google
           </a>
         </div>
 
-        <div className="relative my-6">
+        <div className="relative my-6" aria-hidden="true">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
@@ -86,32 +88,38 @@ function Login() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" aria-label="Login form">
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-1">
+            <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-1">
               Email Address
             </label>
             <input
               type="email"
+              id="email"
               name="email"
               className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
               placeholder="you@example.com"
               required
               onChange={handleChange}
+              autoComplete="email"
+              aria-required="true"
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-1">
+            <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-1">
               Password
             </label>
             <input
               type="password"
+              id="password"
               name="password"
               className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
               placeholder="••••••••"
               required
               onChange={handleChange}
+              autoComplete="current-password"
+              aria-required="true"
             />
           </div>
 
@@ -130,6 +138,7 @@ function Login() {
             <a
               href="/forgot-password"
               className="text-sm text-purple-600 hover:text-purple-800 font-medium transition-colors"
+              aria-label="Forgot password?"
             >
               Forgot password?
             </a>
@@ -138,6 +147,7 @@ function Login() {
           <button
             type="submit"
             className="w-full py-2.5 mt-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:opacity-95 transition-opacity font-medium"
+            aria-label="Sign in"
           >
             Sign In
           </button>
@@ -146,7 +156,11 @@ function Login() {
         <div className="text-center mt-6">
           <p className="text-gray-600 text-sm">
             Don't have an account?{' '}
-            <a href="/register" className="text-purple-600 hover:text-purple-800 font-medium transition-colors">
+            <a 
+              href="/register" 
+              className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
+              aria-label="Sign up"
+            >
               Sign up
             </a>
           </p>

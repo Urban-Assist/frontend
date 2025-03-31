@@ -1,5 +1,5 @@
 import React, { useState } from "react";
- import bg from '../assets/terms-cond-bg.png';
+import bg from '../assets/terms-cond-bg.png';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -12,7 +12,7 @@ const TermsAndConditions = () => {
 
   const handleAgree = () => {
     if (isChecked) {
-      localStorage.setItem("hasAgreedToTerms", "true"); // Store agreement in localStorage
+      localStorage.setItem("hasAgreedToTerms", "true"); 
       onAgree();
     } else {
       alert("Please agree to the terms and conditions to proceed.");
@@ -25,7 +25,7 @@ const TermsAndConditions = () => {
     try {
       const response = await axios.post(
         API_URL,
-        {}, // Request body (empty object if no body is needed)
+        {}, 
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,7 +33,7 @@ const TermsAndConditions = () => {
         }
       );
 
-      const status = response.status; // axios automatically parses JSON
+      const status = response.status;
       console.log(status);
 
       if (status === 201) {
@@ -42,22 +42,37 @@ const TermsAndConditions = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-
   }
 
   return (
-
-
-    <div >
-      <div class="w-screen h-screen overflow-hidden ">
-        <img src={bg} className="blur-sm object-fit " />
+    <div role="document">
+      <div className="w-screen h-screen overflow-hidden">
+        <img 
+          src={bg} 
+          className="blur-sm object-fit" 
+          alt="Decorative background" 
+          aria-hidden="true"
+        />
       </div>
-      <div className="flex absolute inset-0 items-center justify-center bg-black/50 mt-15">
+      <div 
+        className="flex absolute inset-0 items-center justify-center bg-black/50 mt-15"
+        role="dialog" 
+        aria-modal="true"
+        aria-labelledby="terms-heading"
+      >
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
-          <h1 className="text-2xl font-bold mb-6 text-center">
+          <h1 
+            id="terms-heading"
+            className="text-2xl font-bold mb-6 text-center"
+          >
             Terms and Conditions for Urban Assist
           </h1>
-          <div className="overflow-y-auto h-96 mb-6 p-4 border border-gray-200 rounded-lg">
+          <div 
+            className="overflow-y-auto h-96 mb-6 p-4 border border-gray-200 rounded-lg"
+            role="region"
+            aria-label="Terms and conditions content"
+            tabIndex="0"
+          >
             <p className="mb-4">
               Welcome to Urban Assist! Before you proceed to create your profile and offer your
               services, please read and agree to the following terms and conditions.
@@ -109,8 +124,14 @@ const TermsAndConditions = () => {
               checked={isChecked}
               onChange={(e) => setIsChecked(e.target.checked)}
               className="mr-2"
+              aria-required="true"
+              aria-describedby="agree-label"
             />
-            <label htmlFor="agree" className="text-sm">
+            <label 
+              id="agree-label"
+              htmlFor="agree" 
+              className="text-sm"
+            >
               I have read and agree to the terms and conditions.
             </label>
           </div>
@@ -118,6 +139,7 @@ const TermsAndConditions = () => {
             <button
               onClick={handleAgree}
               className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+              aria-disabled={!isChecked}
             >
               Agree and Continue
             </button>
@@ -125,9 +147,6 @@ const TermsAndConditions = () => {
         </div>
       </div>
     </div>
-
-
-
   );
 };
 

@@ -4,7 +4,7 @@ import { FaStar, FaMapMarkerAlt, FaSearch, FaFilter, FaChevronRight, FaCheckCirc
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-// Create a utility function to help with provider ID access across components
+
 export const getProviderIdFromEmail = async (email, token) => {
   try {
     const response = await axios.post(
@@ -39,7 +39,7 @@ export default function ServiceProviders() {
     const [minRating, setMinRating] = useState(0);
     const token = localStorage.getItem("token");
 
-    // For hero section
+   
     const serviceImages = {
         "plumbing": "/api/placeholder/1600/400",
         "house-cleaning": "/api/placeholder/1600/400",
@@ -65,16 +65,16 @@ export default function ServiceProviders() {
                     throw new Error("Failed to fetch providers");
                 }
 
-                // Store providers with clear ID information
+                
                 const providersWithIds = response.data.map(provider => ({
                     ...provider,
-                    // Ensure ID is explicitly available
+                  
                     providerId: provider.id || null
                 }));
                 
                 setServiceProviders(providersWithIds);
                 
-                // Store provider email-to-id mapping in sessionStorage for other components to use
+             
                 const emailToIdMap = {};
                 providersWithIds.forEach(provider => {
                     if (provider.email && provider.id) {
@@ -82,7 +82,7 @@ export default function ServiceProviders() {
                     }
                 });
                 
-                // Store this mapping for other components to access
+        
                 sessionStorage.setItem('providerEmailToIdMap', JSON.stringify(emailToIdMap));
                 
             } catch (err) {
@@ -95,7 +95,7 @@ export default function ServiceProviders() {
         fetchProviders();
     }, [service, token]);
 
-    // Filter and search functionality
+
     const filteredProviders = serviceProviders.filter(provider => {
         const nameMatch = `${provider.firstName} ${provider.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
         const descriptionMatch = provider.description?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -106,9 +106,9 @@ export default function ServiceProviders() {
         return (nameMatch || descriptionMatch || addressMatch) && ratingMatch && priceMatch;
     });
 
-    // Skeleton loader component
+
     const ProviderSkeleton = () => (
-        <div className="bg-white rounded-xl shadow-md p-6 animate-pulse">
+        <div className="bg-white rounded-xl shadow-md p-6 animate-pulse" aria-hidden="true">
             <div className="flex justify-center">
                 <div className="w-20 h-20 bg-gray-200 rounded-full"></div>
             </div>
@@ -126,15 +126,20 @@ export default function ServiceProviders() {
         </div>
     );
 
-    // Rating star component
+
     const RatingStars = ({ rating, setRating }) => {
         return (
-            <div className="flex space-x-1">
+            <div className="flex space-x-1" role="radiogroup" aria-label="Minimum rating">
                 {[1, 2, 3, 4, 5].map((star) => (
                     <FaStar
                         key={star}
                         className={`cursor-pointer ${star <= minRating ? 'text-yellow-500' : 'text-gray-300'}`}
                         onClick={() => setRating(star)}
+                        role="radio"
+                        aria-checked={star <= minRating}
+                        tabIndex="0"
+                        onKeyDown={(e) => e.key === 'Enter' && setRating(star)}
+                        aria-label={`${star} star${star !== 1 ? 's' : ''}`}
                     />
                 ))}
             </div>
@@ -149,27 +154,30 @@ export default function ServiceProviders() {
                 <div className="container mx-auto px-4 md:px-8">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="relative w-full md:w-1/2">
-                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" aria-hidden="true" />
                             <input
                                 type="text"
                                 placeholder="Search by name, description or location..."
                                 className="w-full py-2 pl-10 pr-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                aria-label="Search providers"
                             />
                         </div>
                         <button
                             className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
                             onClick={() => setFilterOpen(!filterOpen)}
+                            aria-expanded={filterOpen}
+                            aria-controls="filters-panel"
                         >
-                            <FaFilter />
+                            <FaFilter aria-hidden="true" />
                             Filters
                         </button>
                     </div>
 
                     {/* Filters Panel */}
                     {filterOpen && (
-                        <div className="mt-4 border-t pt-4 pb-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div id="filters-panel" className="mt-4 border-t pt-4 pb-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Price Range: ${priceRange}</label>
                                 <input
@@ -179,6 +187,7 @@ export default function ServiceProviders() {
                                     value={priceRange}
                                     onChange={(e) => setPriceRange(Number(e.target.value))}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    aria-label="Price range filter"
                                 />
                             </div>
                             <div>
@@ -193,16 +202,16 @@ export default function ServiceProviders() {
             {/* Main Content */}
             <div className="container mx-auto px-4 md:px-8 py-10 md:w-full lg:w-[80vw] xl:w-[60vw]">
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" aria-busy="true">
                         {[1, 2, 3, 4, 5, 6].map((item) => (
                             <ProviderSkeleton key={item} />
                         ))}
                     </div>
                 ) : error ? (
                     <div className="text-center py-16">
-                        <div className="bg-red-50 border border-red-100 rounded-lg p-8 max-w-md mx-auto">
+                        <div className="bg-red-50 border border-red-100 rounded-lg p-8 max-w-md mx-auto" role="alert">
                             <div className="flex flex-col items-center">
-                                <svg className="w-12 h-12 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="w-12 h-12 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
                                 <h3 className="text-lg font-semibold text-red-800 mb-2">Unable to Load Providers</h3>
@@ -210,6 +219,7 @@ export default function ServiceProviders() {
                                 <button
                                     className="mt-6 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                                     onClick={() => window.location.reload()}
+                                    aria-label="Try again to load providers"
                                 >
                                     Try Again
                                 </button>
@@ -222,7 +232,7 @@ export default function ServiceProviders() {
                             <p className="text-gray-600">{filteredProviders.length} providers found</p>
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-500">Sort by:</span>
-                                <select className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <select className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Sort providers by">
                                     <option>Highest Rating</option>
                                     <option>Lowest Price</option>
                                     <option>Highest Price</option>
@@ -235,14 +245,13 @@ export default function ServiceProviders() {
                                     key={index}
                                     to={`/portfolio/${provider.id}?service=${service.toLowerCase()}`}
                                     className="block"
-                                    // Store provider ID in data attribute for easier access
                                     data-provider-id={provider.id}
                                     data-provider-email={provider.email}
                                     onClick={() => {
-                                        // Store the last clicked provider info in localStorage for other components
                                         localStorage.setItem('lastViewedProviderId', provider.id);
                                         localStorage.setItem('lastViewedProviderEmail', provider.email);
                                     }}
+                                    aria-label={`View profile of ${provider.firstName} ${provider.lastName}`}
                                 >
                                     <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl h-full flex flex-col">
                                         <div className="bg-gray-100 p-6 text-center relative">
@@ -250,26 +259,24 @@ export default function ServiceProviders() {
                                             <div className="inline-block p-1 bg-white rounded-full">
                                                 <img
                                                     src={provider.profilePic || "/api/placeholder/150/150"}
-                                                    alt={provider.firstName}
+                                                    alt={`Profile of ${provider.firstName} ${provider.lastName}`}
                                                     className="w-24 h-24 rounded-full object-cover"
                                                 />
                                             </div>
 
-
-
                                             <div className="flex items-center align-center justify-between mt-1 ">
-                                                <h3 className="text-xl font-bold  ">
+                                                <h3 className="text-xl font-bold">
                                                     {provider.firstName} {provider.lastName}
                                                 </h3>
                                                 <div className="flex items-center">
-                                                    <FaStar className="text-yellow-400 mr-1" />
+                                                    <FaStar className="text-yellow-400 mr-1" aria-hidden="true" />
                                                     <span>{provider.stars?.toFixed(1) || "New"}</span>
                                                 </div>
                                             </div>
 
                                             {provider.verified && (
                                                 <div className="absolute top-3 right-3 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full flex items-center">
-                                                    <FaCheckCircle className="mr-1" />
+                                                    <FaCheckCircle className="mr-1" aria-hidden="true" />
                                                     Verified
                                                 </div>
                                             )}
@@ -279,7 +286,7 @@ export default function ServiceProviders() {
                                             <p className="text-gray-600 mb-4 line-clamp-3">{provider.description || "No description available"}</p>
 
                                             <div className="flex items-start text-gray-500 mb-4">
-                                                <FaMapMarkerAlt className="text-red-500 mr-2 mt-1 flex-shrink-0" />
+                                                <FaMapMarkerAlt className="text-red-500 mr-2 mt-1 flex-shrink-0" aria-hidden="true" />
                                                 <span className="text-sm">{provider.address || "Location not specified"}</span>
                                             </div>
 
@@ -297,22 +304,20 @@ export default function ServiceProviders() {
                                                     ${provider.price} <span className="text-sm text-gray-500 font-normal">/ hour</span>
                                                 </div>
                                                 <span className="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium">
-                                                    View Profile <FaChevronRight className="ml-1" />
+                                                    View Profile <FaChevronRight className="ml-1" aria-hidden="true" />
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
-
-                                    
                                 </Link>
                             ))}
                         </div>
                     </>
                 ) : (
                     <div className="text-center py-16">
-                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-8 max-w-md mx-auto">
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-8 max-w-md mx-auto" role="alert">
                             <div className="flex flex-col items-center">
-                                <svg className="w-12 h-12 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="w-12 h-12 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                                 <h3 className="text-lg font-semibold text-blue-800 mb-2">No Providers Found</h3>
@@ -325,6 +330,7 @@ export default function ServiceProviders() {
                                             setMinRating(0);
                                             setPriceRange(1000);
                                         }}
+                                        aria-label="Clear all filters"
                                     >
                                         Clear Filters
                                     </button>
@@ -341,7 +347,7 @@ export default function ServiceProviders() {
                     <div className="container mx-auto text-center">
                         <h2 className="text-2xl md:text-3xl font-bold mb-4">Need help finding the right provider?</h2>
                         <p className="max-w-2xl mx-auto mb-8">Our matching service can help you find the perfect professional for your specific needs.</p>
-                        <button className="bg-white text-indigo-500 px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition-colors">
+                        <button className="bg-white text-indigo-500 px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition-colors" aria-label="Get matched with a provider">
                             Get Matched Now
                         </button>
                     </div>

@@ -4,12 +4,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaTools, FaBroom, FaWrench, FaBolt, FaRecycle, FaHeart, FaHandshake } from "react-icons/fa";
 
-// Define a consistent color and icon mapping
 const serviceStyles = {
   Restoration: {
     icon: FaRecycle,
     color: "text-teal-600",
-    image: "https://img.freepik.com/free-photo/painting-red_1385-599.jpg?semt=ais_hybrid" // These would be replaced with actual image paths in production
+    image: "https://img.freepik.com/free-photo/painting-red_1385-599.jpg?semt=ais_hybrid"
   },
   "House Cleaning": {
     icon: FaBroom,
@@ -43,7 +42,6 @@ const serviceStyles = {
   },
 };
 
-// Enhanced Card component with image for users
 const ServiceCard = ({ name, description, icon: Icon, color, image, onClick }) => (
   <motion.div
     className="bg-white rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl"
@@ -81,7 +79,6 @@ const ServiceCard = ({ name, description, icon: Icon, color, image, onClick }) =
   </motion.div>
 );
 
-// Provider Service Card - a different UI for providers
 const ProviderServiceCard = ({ name, description, icon: Icon, color, image, onClick }) => (
   <motion.div
     className="bg-white rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl border-2 border-transparent hover:border-indigo-500"
@@ -124,7 +121,6 @@ const ProviderServiceCard = ({ name, description, icon: Icon, color, image, onCl
   </motion.div>
 );
 
-// Enhanced Skeleton Loader for better UX
 const SkeletonCard = () => (
   <div className="bg-white rounded-lg overflow-hidden shadow-lg">
     <div className="h-48 w-full bg-gray-200 animate-pulse" />
@@ -172,7 +168,7 @@ export default function ServiceCards({ title }) {
             icon: style.icon,
             color: style.color,
             description: service.description,
-            image: style.image, // Use provided image or fallback to default
+            image: style.image,
           };
         });
 
@@ -211,7 +207,7 @@ export default function ServiceCards({ title }) {
             ))}
           </div>
         ) : error ? (
-          <div className="text-center bg-red-50 rounded-lg p-6 mx-auto max-w-md">
+          <div className="text-center bg-red-50 rounded-lg p-6 mx-auto max-w-md" role="alert">
             <svg className="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>

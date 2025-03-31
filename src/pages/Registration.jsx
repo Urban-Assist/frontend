@@ -4,10 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 const RegistrationPage = () => {
     const navigate = useNavigate();
-    // Hardcoded Google OAuth2 URL
     const googleAuthUrl = `/auth-api/oauth2/authorize/google`;
     
-    // State for form data
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -16,14 +14,10 @@ const RegistrationPage = () => {
         password: ''
     });
 
-    // State for error handling
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    
-    // Track current form step
     const [step, setStep] = useState(1);
 
-    // Handle input changes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prevData => ({
@@ -32,7 +26,6 @@ const RegistrationPage = () => {
         }));
     };
 
-    // Form validation
     const validateStep = (currentStep) => {
         if (currentStep === 1) {
             if (!formData.email.trim()) {
@@ -64,22 +57,19 @@ const RegistrationPage = () => {
         return true;
     };
 
-    // Handle next step - key fix here
     const handleNextStep = (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
         if (validateStep(step)) {
             setError('');
             setStep(prevStep => prevStep + 1);
         }
     };
 
-    // Handle previous step
     const handlePrevStep = () => {
         setStep(prevStep => prevStep - 1);
         setError('');
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -88,8 +78,6 @@ const RegistrationPage = () => {
         }
 
         try {
-            const AUTH_API = import.meta.env.VITE_SERVER_URL;
-           // console.log(  `/auth-api/public/register`)
             const response = await axios.post('/auth-api/public/register', formData);
             
             if (response.status === 200) {
@@ -113,46 +101,65 @@ const RegistrationPage = () => {
                     </p>
                 </div>
 
-                {/* Progress Indicator */}
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-8" aria-label="Progress steps">
                     <div className="flex items-center">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-purple-600 text-white' : 'bg-gray-200'}`}>1</div>
+                        <div 
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-purple-600 text-white' : 'bg-gray-200'}`}
+                            aria-current={step === 1 ? "step" : undefined}
+                        >
+                            <span className="sr-only">Step 1</span>
+                            <span aria-hidden="true">1</span>
+                        </div>
                         <div className={`w-12 h-1 ${step >= 2 ? 'bg-purple-600' : 'bg-gray-200'}`}></div>
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-purple-600 text-white' : 'bg-gray-200'}`}>2</div>
+                        <div 
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-purple-600 text-white' : 'bg-gray-200'}`}
+                            aria-current={step === 2 ? "step" : undefined}
+                        >
+                            <span className="sr-only">Step 2</span>
+                            <span aria-hidden="true">2</span>
+                        </div>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded mb-4 text-sm">
+                    <div 
+                        className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded mb-4 text-sm"
+                        role="alert"
+                        aria-live="assertive"
+                    >
                         {error}
                     </div>
                 )}
 
                 {success && (
-                    <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 rounded mb-4 text-sm">
+                    <div 
+                        className="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 rounded mb-4 text-sm"
+                        role="alert"
+                        aria-live="polite"
+                    >
                         {success}
                     </div>
                 )}
 
                 {step === 1 ? (
-                    // First step form - Note: separate form for step 1
-                    <form onSubmit={handleNextStep} className="space-y-4">
-                        {/* Google OAuth Button */}
+                    <form onSubmit={handleNextStep} className="space-y-4" aria-label="Account information form">
                         <div className="mb-6">
                             <a
                                 href={googleAuthUrl}
                                 className="w-full flex items-center justify-center py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
+                                aria-label="Sign up with Google"
                             >
                                 <img
                                     src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/16px.svg"
-                                    alt="Google Logo"
+                                    alt=""
                                     className="w-5 h-5 mr-2"
+                                    aria-hidden="true"
                                 />
                                 Sign up with Google
                             </a>
                         </div>
 
-                        <div className="relative my-6">
+                        <div className="relative my-6" aria-hidden="true">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-300"></div>
                             </div>
@@ -162,29 +169,35 @@ const RegistrationPage = () => {
                         </div>
 
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-1">
+                            <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-1">
                                 Email Address
                             </label>
                             <input
                                 type="email"
+                                id="email"
                                 name="email"
                                 value={formData.email}
                                 className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                                 placeholder="you@example.com"
                                 onChange={handleChange}
+                                aria-required="true"
+                                autoComplete="email"
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-1">
+                            <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-1">
                                 Password
                             </label>
                             <input
                                 type="password"
+                                id="password"
                                 name="password"
                                 value={formData.password}
                                 className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                                 placeholder="••••••••"
                                 onChange={handleChange}
+                                aria-required="true"
+                                autoComplete="new-password"
                             />
                             <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
                         </div>
@@ -192,64 +205,78 @@ const RegistrationPage = () => {
                         <button
                             type="submit"
                             className="w-full py-2.5 mt-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:opacity-95 transition-opacity font-medium"
+                            aria-label="Continue to next step"
                         >
                             Continue
                         </button>
                     </form>
                 ) : (
-                    // Second step form
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4" aria-label="Personal information form">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-1">
+                                <label htmlFor="firstName" className="block text-gray-700 text-sm font-medium mb-1">
                                     First Name
                                 </label>
                                 <input
                                     type="text"
+                                    id="firstName"
                                     name="firstName"
                                     value={formData.firstName}
                                     className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                                     placeholder="John"
                                     onChange={handleChange}
+                                    aria-required="true"
+                                    autoComplete="given-name"
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-1">
+                                <label htmlFor="lastName" className="block text-gray-700 text-sm font-medium mb-1">
                                     Last Name
                                 </label>
                                 <input
                                     type="text"
+                                    id="lastName"
                                     name="lastName"
                                     value={formData.lastName}
                                     className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                                     placeholder="Doe"
                                     onChange={handleChange}
+                                    aria-required="true"
+                                    autoComplete="family-name"
                                 />
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-1">
+                        <div role="radiogroup" aria-labelledby="role-label">
+                            <span id="role-label" className="block text-gray-700 text-sm font-medium mb-1">
                                 I am a
-                            </label>
+                            </span>
                             <div className="grid grid-cols-2 gap-3 mt-1">
                                 <div
+                                    role="radio"
+                                    aria-checked={formData.role === 'user'}
+                                    tabIndex="0"
                                     className={`border rounded-lg p-3 cursor-pointer transition-all ${
                                         formData.role === 'user' 
                                             ? 'border-purple-500 bg-purple-50' 
                                             : 'border-gray-300 hover:border-gray-400'
                                     }`}
                                     onClick={() => setFormData({...formData, role: 'user'})}
+                                    onKeyDown={(e) => e.key === 'Enter' && setFormData({...formData, role: 'user'})}
                                 >
                                     <div className="font-medium">User</div>
                                     <div className="text-xs text-gray-500">Looking for services</div>
                                 </div>
                                 <div
+                                    role="radio"
+                                    aria-checked={formData.role === 'provider'}
+                                    tabIndex="0"
                                     className={`border rounded-lg p-3 cursor-pointer transition-all ${
                                         formData.role === 'provider' 
                                             ? 'border-purple-500 bg-purple-50' 
                                             : 'border-gray-300 hover:border-gray-400'
                                     }`}
                                     onClick={() => setFormData({...formData, role: 'provider'})}
+                                    onKeyDown={(e) => e.key === 'Enter' && setFormData({...formData, role: 'provider'})}
                                 >
                                     <div className="font-medium">Provider</div>
                                     <div className="text-xs text-gray-500">Offering services</div>
@@ -262,12 +289,14 @@ const RegistrationPage = () => {
                                 type="button"
                                 onClick={handlePrevStep}
                                 className="w-1/3 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                                aria-label="Go back to previous step"
                             >
                                 Back
                             </button>
                             <button
                                 type="submit"
                                 className="w-2/3 py-2.5 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:opacity-95 transition-opacity font-medium"
+                                aria-label="Complete sign up"
                             >
                                 Complete Sign Up
                             </button>
