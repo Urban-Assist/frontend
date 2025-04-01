@@ -43,13 +43,16 @@ VITE_SERVER_URL = http://localhost:5050
 VITE_SERVER_URL = http://localhost:8083
 
 ## Screenshots
- ![Register](https://imgur.com/8AQFARU)
- ![Homepage](https://imgur.com/ikb9i49)
- ![Discover](https://imgur.com/S7Wxi5G)
- ![Provider's Homepage](https://imgur.com/5S1RuKB)
- ![Provider's Homepage](https://imgur.com/5S1RuKB)
- ![Payment slip](https://imgur.com/ZUuXvnz)
- ![Bookings](https://imgur.com/4ukIC8d)
- ![Portfolio](https://imgur.com/VmEsanq)
+ ![Register](https://imgur.com/8AQFARU.jpg)
+ ![Homepage](https://imgur.com/ikb9i49.jpg)
+ ![Discover](https://imgur.com/S7Wxi5G.jpg)
+ ![My bookings](https://imgur.com/Zk5cB8o.jpg)
+ ![Provider's Homepage](https://imgur.com/5S1RuKB.jpg)
+ ![Booking History](https://imgur.com/e4yjba2)
+ ![Payment slip](https://imgur.com/ZUuXvnz.jpg)
+ ![Bookings](https://imgur.com/4ukIC8d.jpg)
+ ![Portfolio](https://imgur.com/VmEsanq.jpg)
+ ![Settings](https://imgur.com/8PZshXh.jpg)
+ ![admin](https://imgur.com/ZrSNjfh.jpg)
  
  
