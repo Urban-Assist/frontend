@@ -41,3 +41,15 @@ VITE_SERVER_URL = http://localhost:5051
 VITE_SERVER_URL = http://localhost:8001
 VITE_SERVER_URL = http://localhost:5050
 VITE_SERVER_URL = http://localhost:8083
+
+## Screenshots
+ ![Register](https://imgur.com/8AQFARU)
+ ![Homepage](https://imgur.com/ikb9i49)
+ ![Discover](https://imgur.com/S7Wxi5G)
+ ![Provider's Homepage](https://imgur.com/5S1RuKB)
+ ![Provider's Homepage](https://imgur.com/5S1RuKB)
+ ![Payment slip](https://imgur.com/ZUuXvnz)
+ ![Bookings](https://imgur.com/4ukIC8d)
+ ![Portfolio](https://imgur.com/VmEsanq)
+ 
+ 
