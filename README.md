@@ -9,6 +9,8 @@
 
 This template provides a minimal setup to get React working seamlessly with Vite, featuring Hot Module Replacement (HMR) and some pre-configured ESLint rules.
 
+</div>
+
 ## Official Plugins
 
 Currently, two official plugins are available for React integration:
