@@ -48,7 +48,7 @@ VITE_SERVER_URL = http://localhost:8083
  ![Discover](https://imgur.com/S7Wxi5G.jpg)
  ![My bookings](https://imgur.com/Zk5cB8o.jpg)
  ![Provider's Homepage](https://imgur.com/5S1RuKB.jpg)
- ![Booking History](https://imgur.com/e4yjba2)
+ ![Booking History](https://imgur.com/e4yjba2.jpg)
  ![Payment slip](https://imgur.com/ZUuXvnz.jpg)
  ![Bookings](https://imgur.com/4ukIC8d.jpg)
  ![Portfolio](https://imgur.com/VmEsanq.jpg)
