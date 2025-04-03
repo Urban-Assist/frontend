@@ -32,11 +32,11 @@ function Redirect() {
         const response = await axios.get(`${AUTH_API}/auth-api/public/OAuth/callback?code=${code}`);
 
         if (response.status === 200) {
-          const { token, redirectUrl } = response.data;
+          const { token, redirectUrl, role } = response.data;
 
           // Store the token in localStorage
           localStorage.setItem('token', token);
-
+          localStorage.setItem('role', role);
           // Navigate to the redirect URL or fallback to the dashboard
           navigate(redirectUrl || '/dashboard');
         }
