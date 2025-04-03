@@ -15,5 +15,6 @@ export const frontendRoutes = {
   PAYMENT: "/payment",
   SETTING: "/setting",
   REDIRECT: "/oauth2/redirect",
-  MYBOOKING: "/bookings"
+  MYBOOKING: "/bookings",
+  GOOGLE_AUTH:"/google-auth",
 };
