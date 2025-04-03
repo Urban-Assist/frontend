@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Lottie from 'react-lottie';
+import runningRabbitAnimation from '../assets/running-rabbit.json';
 
 function Redirect() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: runningRabbitAnimation,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
 
   useEffect(() => {
     const handleGoogleCallback = async () => {
@@ -39,13 +50,22 @@ function Redirect() {
   }, [navigate]);
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen">
       {error ? (
-        <div className="text-red-500 text-center">
-          <p>{error}</p>
+        // <div className="text-red-500 text-center">
+        //   <p>{error}</p>
+        // </div>
+        <div className="text-gray-700 text-center">
+        <div className="w-64 h-64 mb-4">
+          <Lottie options={defaultOptions} />
         </div>
+        <p>Processing your login...</p>
+      </div>
       ) : (
         <div className="text-gray-700 text-center">
+          <div className="w-64 h-64 mb-4">
+            <Lottie options={defaultOptions} />
+          </div>
           <p>Processing your login...</p>
         </div>
       )}
