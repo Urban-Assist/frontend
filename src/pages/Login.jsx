@@ -11,7 +11,7 @@ function Login() {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-const googleAuthUrl=  "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=2431049737-jqqkl0607p9b98qaqgsoc1rug4e3nvpv.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fadvancedweb-vm4.research.cs.dal.ca%2Fgoogle-auth&scope=email%20profile%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline&prompt=consent&service=lso&o2v=1&ddm=1&flowName=GeneralOAuthFlow"
+const googleAuthUrl=  "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=2431049737-jqqkl0607p9b98qaqgsoc1rug4e3nvpv.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fadvancedweb-vm4.research.cs.dal.ca%2Fgoogle-auth&response_type=code&scope=email%20profile%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline&prompt=consent&service=lso&o2v=1&ddm=1&flowName=GeneralOAuthFlow"
   // const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_GOOGLE_REDIRECT_URI}&response_type=code&scope=email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&access_type=offline&prompt=consent`;
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
