@@ -52,15 +52,11 @@ function Redirect() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       {error ? (
-        // <div className="text-red-500 text-center">
-        //   <p>{error}</p>
-        // </div>
-        <div className="text-gray-700 text-center">
-        <div className="w-64 h-64 mb-4">
-          <Lottie options={defaultOptions} />
+        <div className="text-red-500 text-center">
+          <p>{error}</p>
         </div>
-        <p>Processing your login...</p>
-      </div>
+         
+    
       ) : (
         <div className="text-gray-700 text-center">
           <div className="w-64 h-64 mb-4">
