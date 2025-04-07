@@ -29,7 +29,7 @@ function Redirect() {
 
       try {
         const AUTH_API = import.meta.env.VITE_SERVER_URL;
-        const response = await axios.get(`${AUTH_API}/auth-api/public/OAuth/callback?code=${code}`);
+        const response = await axios.get(`/auth-api/public/OAuth/callback?code=${code}`);
 
         if (response.status === 200) {
           const { token, redirectUrl, role } = response.data;
